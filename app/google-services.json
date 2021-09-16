@@ -1,0 +1,76 @@
+{
+  "project_info": {
+    "project_number": "610572994439",
+    "project_id": "notepad-61aa0",
+    "storage_bucket": "notepad-61aa0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610572994439:android:69b54c60cacc8fecb2b522",
+        "android_client_info": {
+          "package_name": "com.example.notepad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610572994439-maa64vnl1qf23823j386nrcd10a173io.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPi_Onsw6fVxhzz5Te-ThZ4FwA4Jg4Bi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610572994439-maa64vnl1qf23823j386nrcd10a173io.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610572994439:android:b94b4a355cdbddecb2b522",
+        "android_client_info": {
+          "package_name": "com.example.notepad_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610572994439-87dc8hu36j9pe6igideqodg4g81vbunt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notepad_project",
+            "certificate_hash": "7c3deb02e9140275ca0db8e4d5718c5b4dcc8b22"
+          }
+        },
+        {
+          "client_id": "610572994439-maa64vnl1qf23823j386nrcd10a173io.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPi_Onsw6fVxhzz5Te-ThZ4FwA4Jg4Bi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610572994439-maa64vnl1qf23823j386nrcd10a173io.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
