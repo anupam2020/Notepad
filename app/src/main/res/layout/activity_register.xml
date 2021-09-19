@@ -120,16 +120,16 @@
 
 
     <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/registerButton"
         android:layout_width="165dp"
         android:layout_height="55dp"
-        android:background="@drawable/button_bg_blue"
         android:layout_below="@id/editTextLayout3"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
+        android:background="@drawable/button_bg_blue"
         android:text="CREATE"
-        android:textSize="18dp"
         android:textColor="@color/white"
-        android:id="@+id/registerButton"/>
+        android:textSize="18dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -226,7 +226,8 @@
             android:layout_marginLeft="5dp"
             android:textStyle="bold"
             android:fontFamily="@font/aladin"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:id="@+id/registerLoginHere"/>
 
     </LinearLayout>
 

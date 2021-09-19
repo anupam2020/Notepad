@@ -6,6 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="light_black">#BF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="violet">#5E35B1</color>
     <color name="orange">#FF9800</color>
@@ -18,4 +19,7 @@
     <color name="yellow">#FDD835</color>
     <color name="grey">#80000000</color>
     <color name="pink">#CCFF005E</color>
+    <color name="notes_blue">#80039BE5</color>
+    <color name="very_light_blue">#08029AE6</color>
+    <color name="notes_status_bar_blue">#BF029AE6</color>
 </resources>

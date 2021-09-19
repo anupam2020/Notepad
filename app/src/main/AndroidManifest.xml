@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.notepad_project">
 
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,18 +14,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Notepad">
         <activity
-            android:name=".RegisterActivity"
+            android:name=".AddNotesActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"/>
         <activity
+            android:name=".Title_Description"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/BlackBox"/>
+        <activity
+            android:name=".EditNotes"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/BlackBox"/>
+        <activity
+            android:name=".NotesActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/BlackBox" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/BlackBox" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"

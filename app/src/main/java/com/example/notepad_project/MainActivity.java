@@ -2,6 +2,8 @@ package com.example.notepad_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -15,18 +17,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button signIn,signUp;
+    private Button signIn,signUp;
 
-    TextView mainText,mainSubText;
+    private TextView mainText,mainSubText;
 
-    Animation topTextAnim,subTextAnim,lottieAnim,button1Anim,button2Anim;
+    private Animation topTextAnim,subTextAnim,lottieAnim,button1Anim,button2Anim;
 
-    LottieAnimationView lottie;
+    private LottieAnimationView lottie;
 
     private RelativeLayout relative;
+
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        firebaseAuth= FirebaseAuth.getInstance();
+        if(firebaseAuth.getCurrentUser()!=null)
+        {
+            startActivity(new Intent(MainActivity.this,NotesActivity.class));
+            finishAffinity();
+        }
+
+
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +101,33 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
     }
+
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Exit");
+        builder.setMessage("Do you really want to exit?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                finishAffinity();
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+
 }
