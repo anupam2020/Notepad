@@ -58,15 +58,6 @@ public class EditNotes extends AppCompatActivity {
 
         Log.d("State", String.valueOf(new NotesActivity().check));
 
-        if(new NotesActivity().check)
-        {
-            nightModeEdit();
-        }
-        else
-        {
-            dayModeEdit();
-        }
-
 
         title=findViewById(R.id.editNotesTitle);
         des=findViewById(R.id.editNotesDes);
@@ -86,9 +77,16 @@ public class EditNotes extends AppCompatActivity {
 
         key=getIntent().getStringExtra("key");
 
+        dialog.show();
+        dialog.setContentView(R.layout.loading_bg);
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
         editRef.child(editAuth.getCurrentUser().getUid()).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                dialog.dismiss();
 
                 nTitle=snapshot.child("Title").getValue().toString();
                 title.setText(nTitle);
@@ -101,6 +99,7 @@ public class EditNotes extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+                dialog.dismiss();
                 DynamicToast.makeError(EditNotes.this,error.getMessage(),2000).show();
 
             }
@@ -153,6 +152,15 @@ public class EditNotes extends AppCompatActivity {
             }
         });
 
+        if(new NotesActivity().check)
+        {
+            nightModeEdit();
+        }
+        else
+        {
+            dayModeEdit();
+        }
+
     }
 
 
@@ -161,9 +169,9 @@ public class EditNotes extends AppCompatActivity {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));
 
-        //editRelative.setBackgroundResource(R.drawable.black_bg_corner_radius);
+        editRelative.setBackgroundResource(R.drawable.black_bg_corner_radius);
 
-        //topTextEdit.setTextColor(Color.WHITE);
+        topTextEdit.setTextColor(Color.WHITE);
 
     }
 
@@ -172,9 +180,9 @@ public class EditNotes extends AppCompatActivity {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
 
-        //editRelative.setBackgroundResource(R.drawable.blue_bg_corner_radius);
+        editRelative.setBackgroundResource(R.drawable.blue_bg_corner_radius);
 
-        //topTextEdit.setTextColor(Color.BLACK);
+        topTextEdit.setTextColor(Color.BLACK);
 
     }
 

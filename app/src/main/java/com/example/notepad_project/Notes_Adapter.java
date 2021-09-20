@@ -182,7 +182,6 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
         TextView title;
         ImageView more;
         TextView time;
-        RelativeLayout itemRelative;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -190,7 +189,6 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
             title=itemView.findViewById(R.id.itemTitle);
             more=itemView.findViewById(R.id.itemMore);
             time=itemView.findViewById(R.id.textDateTime);
-            itemRelative=itemView.findViewById(R.id.itemNotesRelative);
         }
     }
 }
