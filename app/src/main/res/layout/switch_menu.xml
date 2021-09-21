@@ -6,5 +6,5 @@
         android:id="@+id/switcher"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:text=""/>
+        android:text="" />
 </LinearLayout>

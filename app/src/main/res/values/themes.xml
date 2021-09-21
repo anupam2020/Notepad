@@ -20,13 +20,18 @@
 
     </style>
 
-    <style name="Theme.Notepad.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="NotesThemeLight" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorSecondary">@color/black</item>
+
     </style>
 
-    <style name="Theme.Notepad.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="NotesThemeDark" parent="Theme.MaterialComponents.Light.NoActionBar">
 
-    <style name="Theme.Notepad.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorSecondary">@color/black</item>
+
+    </style>
 
 </resources>

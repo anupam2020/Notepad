@@ -9,8 +9,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:id="@+id/notesRelative1"
-        android:background="#80039BE5">
+        android:id="@+id/relativeTD"
+        android:background="@drawable/blue_bg_corner_radius">
 
         <ImageView
             android:layout_width="30dp"
@@ -57,7 +57,7 @@
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/notesTitleTD"
-        android:layout_below="@id/notesRelative1"/>
+        android:layout_below="@id/relativeTD"/>
 
     <TableRow
         android:id="@+id/hr"

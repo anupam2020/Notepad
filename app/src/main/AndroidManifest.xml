@@ -31,7 +31,8 @@
         <activity
             android:name=".NotesActivity"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NotesThemeLight"/>
         <activity
             android:name=".RegisterActivity"
             android:exported="true"

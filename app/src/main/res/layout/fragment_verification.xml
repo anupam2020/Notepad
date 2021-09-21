@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Verification">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToRefresh">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/verificationRelative">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email Verification!"
+                android:textSize="25dp"
+                android:textColor="@color/black"
+                android:layout_marginTop="50dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/aladin"
+                android:id="@+id/verificationText"
+                android:layout_centerHorizontal="true"/>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/verificationLayout1"
+                app:endIconMode="clear_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_below="@+id/verificationText">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email"
+                    android:singleLine="true"
+                    android:drawableStart="@drawable/ic_outline_email_24"
+                    android:drawableTint="@color/black"
+                    android:drawablePadding="10dp"
+                    android:id="@+id/verificationEmail"/>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/verificationLayout1"
+                android:id="@+id/verificationLinear"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Verification Pending"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:id="@+id/verificationStatusText"
+                    android:visibility="visible"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"/>
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_baseline_info_24"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/verificationStatusIcon"
+                    app:tint="@color/red"/>
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="165dp"
+                android:layout_height="55dp"
+                android:background="@drawable/button_bg_blue"
+                android:layout_below="@id/verificationLinear"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:text="SEND"
+                android:textSize="18dp"
+                android:textColor="@color/white"
+                android:id="@+id/verificationButton"/>
+
+
+            <TextView
+                android:id="@+id/marqueeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/verificationButton"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="30dp"
+                android:drawableStart="@drawable/ic_baseline_campaign_24"
+                android:drawableTint="@color/light_blue"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="Please pull down to refresh and check your verification status. If NOT verified click on the send button and check your Gmail. Network issues may occur so you can try multiple times!"
+                android:textColor="@color/black" />
+
+        </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</FrameLayout>

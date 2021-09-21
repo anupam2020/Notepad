@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -15,6 +17,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,6 +59,9 @@ public class AddNotesActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
+    private RelativeLayout addRelative;
+
+    private TextView topTextAdd;
 
 
     @Override
@@ -62,13 +69,16 @@ public class AddNotesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_notes);
 
-        getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
+        Log.d("State", String.valueOf(new NotesActivity().check));
 
 
         title=findViewById(R.id.addNotesTitle);
         des=findViewById(R.id.addNotesDes);
+        topTextAdd=findViewById(R.id.addTopText);
 
         recyclerView=findViewById(R.id.addNotesRecyclerView);
+
+        addRelative=findViewById(R.id.addNotesRelative1);
 
         tick=findViewById(R.id.addNotesTickButton);
         addImgIcon=findViewById(R.id.addImage);
@@ -139,13 +149,22 @@ public class AddNotesActivity extends AppCompatActivity {
     });
 
 
-    addImgIcon.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        addImgIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            //openGallery();
+                //openGallery();
+            }
+        });
+
+        if(new NotesActivity().check)
+        {
+            nightModeAdd();
         }
-    });
+        else
+        {
+            dayModeAdd();
+        }
 
 
     }
@@ -203,6 +222,36 @@ public class AddNotesActivity extends AppCompatActivity {
 
     }
 
+
+    private void nightModeAdd()
+    {
+
+        getWindow().setStatusBarColor(getResources().getColor(R.color.black));
+
+        addRelative.setBackgroundResource(R.drawable.black_bg_corner_radius);
+
+        topTextAdd.setTextColor(Color.WHITE);
+
+        addImgIcon.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        addVoiceIcon.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+    }
+
+    private void dayModeAdd()
+    {
+
+        getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
+
+        addRelative.setBackgroundResource(R.drawable.blue_bg_corner_radius);
+
+        topTextAdd.setTextColor(Color.BLACK);
+
+        addImgIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        addVoiceIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+    }
 
 
 

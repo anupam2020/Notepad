@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,21 +46,13 @@ public class Title_Description extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private RelativeLayout relativeLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title_description);
-
-
-        if(new NotesActivity().check)
-        {
-            nightModeEdit();
-        }
-        else
-        {
-            dayModeEdit();
-        }
 
 
         title=findViewById(R.id.notesTitleTD);
@@ -66,6 +61,8 @@ public class Title_Description extends AppCompatActivity {
         edit=findViewById(R.id.editNoteTD);
         delete=findViewById(R.id.deleteNoteTD);
         back=findViewById(R.id.backTD);
+
+        relativeLayout=findViewById(R.id.relativeTD);
 
         tdAuth=FirebaseAuth.getInstance();
         tdRef= FirebaseDatabase.getInstance().getReference("Notes");
@@ -182,6 +179,16 @@ public class Title_Description extends AppCompatActivity {
         });
 
 
+        if(new NotesActivity().check)
+        {
+            nightModeEdit();
+        }
+        else
+        {
+            dayModeEdit();
+        }
+
+
     }
 
     private void dayModeEdit()
@@ -189,12 +196,28 @@ public class Title_Description extends AppCompatActivity {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
 
+        relativeLayout.setBackgroundResource(R.drawable.blue_bg_corner_radius);
+
+        back.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        edit.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        delete.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
     }
 
     private void nightModeEdit()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));
+
+        relativeLayout.setBackgroundResource(R.drawable.black_bg_corner_radius);
+
+        back.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        edit.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        delete.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
     }
 }

@@ -72,8 +72,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
 
-        //dayMode();
-
         topText=findViewById(R.id.notesTopText);
 
         nav=findViewById(R.id.navView);
@@ -245,7 +243,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         {
 
             case R.id.profile:
-                //getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Profile()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Profile()).commit();
                 topText.setText("Profile");
                 break;
 
@@ -255,7 +253,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.emailVerification:
-                //getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
                 topText.setText("Verification");
                 break;
 
@@ -267,7 +265,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
 
             case R.id.feedback:
-                //getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Feedback()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Feedback()).commit();
                 topText.setText("Feedback");
                 break;
 
@@ -276,7 +274,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.about:
-                //getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new AboutUs()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new AboutUs()).commit();
                 topText.setText("About Us");
                 break;
         }
@@ -315,7 +313,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         topText.setTextColor(Color.WHITE);
 
-        frameLayout.setBackgroundColor(Color.WHITE);
+        //frameLayout.setBackgroundColor(Color.WHITE);
 
 
     }
@@ -335,7 +333,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         topText.setTextColor(Color.BLACK);
 
-        frameLayout.setBackgroundColor(getResources().getColor(R.color.very_light_blue));
+        //frameLayout.setBackgroundColor(R.color.very_light_blue);
 
     }
 

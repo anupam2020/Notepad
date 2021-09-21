@@ -13,7 +13,7 @@
         <item
             android:title="Notes"
             android:icon="@drawable/ic_outline_sticky_note_2_24"
-            android:id="@+id/notes"/>
+            android:id="@+id/notes" />
 
     </group>
 
