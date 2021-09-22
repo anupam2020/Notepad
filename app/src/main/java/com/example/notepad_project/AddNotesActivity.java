@@ -42,22 +42,22 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
 
-    EditText title,des;
-    ImageView tick,addImgIcon,addImageNote,addVoiceIcon;
+    private EditText title,des;
+    private ImageView tick,addImgIcon,addImageNote,addVoiceIcon;
 
-    FirebaseAuth notesAuth;
-    DatabaseReference notesDatabase;
+    private FirebaseAuth notesAuth;
+    private DatabaseReference notesDatabase;
 
-    ProgressDialog dialog;
+    private ProgressDialog dialog;
 
-    SimpleDateFormat simpleDateFormat;
-    Date date;
+    private SimpleDateFormat simpleDateFormat;
+    private Date date;
 
-    int code=123,speech=111;
+    private int code=123,speech=111;
 
-    int state = 0 ;
+    private int state = 0 ;
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
     private RelativeLayout addRelative;
 
@@ -157,7 +157,7 @@ public class AddNotesActivity extends AppCompatActivity {
             }
         });
 
-        if(new NotesActivity().check)
+        if(NotesActivity.check)
         {
             nightModeAdd();
         }
@@ -180,13 +180,14 @@ public class AddNotesActivity extends AppCompatActivity {
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if(state==1)
             {
-                title.setText(result.get(0));
+                String strTitle=title.getText().toString();
+                title.setText(strTitle+" "+result.get(0));
             }
             else
             {
-                des.setText(result.get(0));
+                String strDes=des.getText().toString();
+                des.setText(strDes+" "+result.get(0));
             }
-
 
         }
     }

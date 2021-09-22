@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Title_Description">
+    tools:context=".Title_Description"
+    android:id="@+id/titleDesMainRelative">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,6 +44,16 @@
             android:layout_toLeftOf="@id/deleteNoteTD"
             app:tint="@color/black"/>
 
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_baseline_volume_up_24"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:id="@+id/speakNoteTD"
+            android:layout_toLeftOf="@id/editNoteTD"
+            app:tint="@color/black"/>
+
     </RelativeLayout>
 
     <TextView
@@ -57,7 +68,8 @@
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/notesTitleTD"
-        android:layout_below="@id/relativeTD"/>
+        android:layout_below="@id/relativeTD"
+        android:textIsSelectable="true"/>
 
     <TableRow
         android:id="@+id/hr"
@@ -66,7 +78,7 @@
         android:background="@color/light_black"
         android:layout_below="@id/notesTitleTD"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginRight="5dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -79,7 +91,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="10dp"
         android:layout_below="@id/notesTitleTD"
-        />
+        android:textIsSelectable="true"/>
 
 <!--    <ImageView-->
 <!--        android:layout_width="0dp"-->

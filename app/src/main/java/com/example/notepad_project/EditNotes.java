@@ -1,13 +1,17 @@
 package com.example.notepad_project;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -34,7 +39,7 @@ public class EditNotes extends AppCompatActivity {
 
 
     private EditText title,des;
-    private ImageView tick;
+    private ImageView tick,addImgIcon,editImageNote,editVoiceIcon;
 
     private FirebaseAuth editAuth;
     private DatabaseReference editRef;
@@ -50,6 +55,10 @@ public class EditNotes extends AppCompatActivity {
 
     private TextView topTextEdit;
 
+    private int code=123,speech=111;
+
+    private int state = 0 ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +73,8 @@ public class EditNotes extends AppCompatActivity {
         topTextEdit=findViewById(R.id.editNotesTopText);
 
         tick=findViewById(R.id.editNotesTickButton);
+        editImageNote=findViewById(R.id.editImage);
+        editVoiceIcon=findViewById(R.id.editVoice);
 
         dialog=new ProgressDialog(this);
 
@@ -104,6 +115,38 @@ public class EditNotes extends AppCompatActivity {
 
             }
         });
+
+
+        editVoiceIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent speechIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to text");
+                startActivityForResult(speechIntent,speech);
+
+            }
+        });
+
+        title.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                state=1;
+                return false;
+            }
+        });
+
+        des.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                state=0;
+                return false;
+            }
+        });
+
 
         tick.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +195,7 @@ public class EditNotes extends AppCompatActivity {
             }
         });
 
-        if(new NotesActivity().check)
+        if(NotesActivity.check)
         {
             nightModeEdit();
         }
@@ -161,6 +204,28 @@ public class EditNotes extends AppCompatActivity {
             dayModeEdit();
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==speech)
+        {
+
+            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if(state==1)
+            {
+                String strTitle=title.getText().toString();
+                title.setText(strTitle+" "+result.get(0));
+            }
+            else
+            {
+                String strDes=des.getText().toString();
+                des.setText(strDes+" "+result.get(0));
+            }
+
+        }
     }
 
 

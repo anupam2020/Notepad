@@ -22,6 +22,26 @@
             android:layout_marginLeft="10dp"
             android:id="@+id/editNotesTopText"/>
 
+        <ImageView
+            android:id="@+id/editImage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_baseline_image_24"
+            app:tint="@color/black"/>
+
+        <ImageView
+            android:id="@+id/editVoice"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/editImage"
+            android:src="@drawable/ic_outline_keyboard_voice_24"
+            app:tint="@color/black"/>
+
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView

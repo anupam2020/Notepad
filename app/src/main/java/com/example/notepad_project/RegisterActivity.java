@@ -69,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG="GOOGLEAUTH";
 
-    private ImageView googleBtn;
+    private ImageView googleBtn,twitterBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
         loginHere=findViewById(R.id.registerLoginHere);
 
         googleBtn=findViewById(R.id.registerGoogleButton);
+        twitterBtn=findViewById(R.id.registerTwitterButton);
 
         relative=findViewById(R.id.registerRelative);
 
@@ -153,6 +154,17 @@ public class RegisterActivity extends AppCompatActivity {
 
                 signIn();
 
+            }
+        });
+
+
+        twitterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent=new Intent(RegisterActivity.this,TwitterActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
             }
         });
 

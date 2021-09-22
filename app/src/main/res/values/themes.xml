@@ -22,7 +22,7 @@
 
     <style name="NotesThemeLight" parent="Theme.MaterialComponents.Light.NoActionBar">
 
-        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimary">@color/black</item>
         <item name="colorSecondary">@color/black</item>
 
     </style>

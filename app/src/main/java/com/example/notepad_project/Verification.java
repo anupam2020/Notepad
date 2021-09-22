@@ -42,7 +42,7 @@ public class Verification extends Fragment {
 
     private String sEmail;
 
-    private TextView statusText,marquee;
+    private TextView statusText,marquee,emailVerifyText;
 
     private ImageView statusIcon;
 
@@ -65,6 +65,8 @@ public class Verification extends Fragment {
         send=view.findViewById(R.id.verificationButton);
 
         statusText=view.findViewById(R.id.verificationStatusText);
+        emailVerifyText=view.findViewById(R.id.verificationText);
+
         statusIcon=view.findViewById(R.id.verificationStatusIcon);
 
         swipe=view.findViewById(R.id.swipeToRefresh);

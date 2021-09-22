@@ -10,6 +10,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/button_bg_blue.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/corner_radius_bg.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_check_circle_outline_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_circle_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_delete_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_favorite_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.2703125" />
@@ -18,6 +19,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_post_add_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_outline_mark_email_read_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/nav_bg.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/violet_bg_corner_radius.xml" value="0.2703125" />
@@ -32,13 +34,14 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_register.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_splash_screen.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_title_description.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/content_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_about_us.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_feedback.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_notes.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/header_layout.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_notes.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_notes.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/loading_bg.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/notes_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/switch_menu.xml" value="0.25416666666666665" />

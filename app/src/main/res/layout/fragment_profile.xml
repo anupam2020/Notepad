@@ -29,7 +29,8 @@
             android:layout_above="@id/profileRelative2"
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/aladin"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp"
+            android:id="@+id/profileText"/>
 
 
         <RelativeLayout

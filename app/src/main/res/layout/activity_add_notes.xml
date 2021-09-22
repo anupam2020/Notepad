@@ -62,14 +62,14 @@
                 android:layout_margin="15dp">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/editTextLayout1"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
-                    app:endIconMode="clear_text"
-                    android:id="@+id/editTextLayout1">
+                    app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/addNotesTitle"
@@ -83,22 +83,22 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/editTextLayout2"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_below="@id/editTextLayout1"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
-                    app:endIconMode="clear_text"
-                    android:id="@+id/editTextLayout2">
+                    app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/addNotesDes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Description"
-                        android:id="@+id/addNotesDes"
                         android:textSize="18dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>

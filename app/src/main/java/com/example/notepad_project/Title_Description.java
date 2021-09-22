@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,6 +33,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
+import org.w3c.dom.Text;
+
+import java.util.Locale;
+
 public class Title_Description extends AppCompatActivity {
 
 
@@ -42,11 +47,13 @@ public class Title_Description extends AppCompatActivity {
 
     private String key;
 
-    private ImageView edit,delete,back;
+    private ImageView edit,delete,back,speak;
 
     private ProgressDialog progressDialog;
 
-    private RelativeLayout relativeLayout;
+    private RelativeLayout relativeLayout,rootRelative;
+
+    private TextToSpeech textToSpeech;
 
 
     @Override
@@ -61,8 +68,10 @@ public class Title_Description extends AppCompatActivity {
         edit=findViewById(R.id.editNoteTD);
         delete=findViewById(R.id.deleteNoteTD);
         back=findViewById(R.id.backTD);
+        speak=findViewById(R.id.speakNoteTD);
 
         relativeLayout=findViewById(R.id.relativeTD);
+        rootRelative=findViewById(R.id.titleDesMainRelative);
 
         tdAuth=FirebaseAuth.getInstance();
         tdRef= FirebaseDatabase.getInstance().getReference("Notes");
@@ -76,9 +85,8 @@ public class Title_Description extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        //Log.d("KEY",key);
 
-        //title.setPaintFlags(title.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+
 
         tdRef.child(tdAuth.getCurrentUser().getUid()).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -115,6 +123,70 @@ public class Title_Description extends AppCompatActivity {
                 finish();
             }
         });
+
+
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
+
+                // if No error is found then only it will run
+                if(i!=TextToSpeech.ERROR){
+                    // To Choose language of speech
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
+
+        // Adding OnClickListener
+        speak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(!title.isFocused() && !des.isFocused())
+                {
+                    DynamicToast.make(Title_Description.this, "Please select a Text!", getResources().getDrawable(R.drawable.ic_outline_info_24),
+                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                }
+
+                if(title.isFocused())
+                {
+                    int startSelection=title.getSelectionStart();
+                    int endSelection=title.getSelectionEnd();
+
+                    String strTitle=title.getText().toString();
+
+                    String selectedText = strTitle.substring(startSelection, endSelection);
+
+                    textToSpeech.speak(selectedText,TextToSpeech.QUEUE_FLUSH,null);
+                }
+                if(des.isFocused())
+                {
+                    int startSelection=des.getSelectionStart();
+                    int endSelection=des.getSelectionEnd();
+
+                    String strDes=des.getText().toString();
+
+                    String selectedText = strDes.substring(startSelection, endSelection);
+
+                    textToSpeech.speak(selectedText,TextToSpeech.QUEUE_FLUSH,null);
+                }
+
+
+
+
+
+//                if(title.isSelected())
+//                {
+//                    textToSpeech.speak(title.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
+//                }
+//                else
+//                {
+//                    textToSpeech.speak(des.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
+//                }
+
+            }
+        });
+
 
 
         delete.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +260,15 @@ public class Title_Description extends AppCompatActivity {
             dayModeEdit();
         }
 
+        rootRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                title.clearFocus();
+                des.clearFocus();
+            }
+        });
+
 
     }
 
@@ -204,6 +285,8 @@ public class Title_Description extends AppCompatActivity {
 
         delete.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
+        speak.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
     }
 
     private void nightModeEdit()
@@ -218,6 +301,8 @@ public class Title_Description extends AppCompatActivity {
         edit.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
         delete.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        speak.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
     }
 }

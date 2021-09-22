@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,9 +30,11 @@ public class Profile extends Fragment {
 
     private DatabaseReference reference;
 
-    String userName,userEmail;
+    private String userName,userEmail;
 
     private ProgressDialog dialog;
+
+    private TextView userText;
 
 
     @Override
@@ -40,6 +43,8 @@ public class Profile extends Fragment {
 
         name=view.findViewById(R.id.profileEditText1);
         email=view.findViewById(R.id.profileEditText2);
+
+        userText=view.findViewById(R.id.profileText);
 
         dialog=new ProgressDialog(getActivity());
 

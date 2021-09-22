@@ -2,6 +2,9 @@ package com.example.notepad_project;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder> {
 
@@ -35,10 +40,14 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
     Context context;
     String uid="";
 
-    String title="";
+    String title="",checkedState="";
+
+    boolean isChecked=false;
 
     FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
     DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notes");
+
+    DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
 
     public Notes_Adapter(ArrayList<Notes_Model> arrayList, Context context) {
         this.arrayList = arrayList;
@@ -53,6 +62,44 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
+
+
+        favorites.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position).getMyKey())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
+
+                            Log.d("dataSnapshot",dataSnapshot.getKey());
+                            if(dataSnapshot.getKey().equals("State"))
+                            {
+                                checkedState=dataSnapshot.getValue().toString();
+                                Log.d("title",checkedState);
+                            }
+                            break;
+
+                        }
+
+                        if(checkedState.equals("true"))
+                        {
+                            holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
+                        }
+                        else
+                        {
+                            holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                        DynamicToast.makeError(context,error.getMessage(),2000).show();
+                    }
+                });
+
 
         holder.title.setText(arrayList.get(position).title);
         holder.time.setText(arrayList.get(position).time);
@@ -73,6 +120,53 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
             }
         });
 
+
+        holder.star.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+
+                if(!checkedState.equals("true"))
+                {
+                    holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
+                    isChecked=true;
+
+                }
+                else
+                {
+                    holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
+                    isChecked=false;
+                }
+
+
+                HashMap map=new HashMap();
+                map.put("State",isChecked);
+
+                favorites.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position).getMyKey())
+                        .setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if(task.isSuccessful())
+                        {
+
+                            DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_yellow_star_24),
+                                    context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
+
+                        }
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+
+                    }
+                });
+
+
+            }
+        });
 
 
 
@@ -181,6 +275,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
         TextView title;
         ImageView more;
+        ImageView star;
         TextView time;
 
         public NotesViewHolder(@NonNull View itemView) {
@@ -188,6 +283,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
             title=itemView.findViewById(R.id.itemTitle);
             more=itemView.findViewById(R.id.itemMore);
+            star=itemView.findViewById(R.id.itemStar);
             time=itemView.findViewById(R.id.textDateTime);
         }
     }
