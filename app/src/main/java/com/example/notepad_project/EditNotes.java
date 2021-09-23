@@ -238,6 +238,11 @@ public class EditNotes extends AppCompatActivity {
 
         topTextEdit.setTextColor(Color.WHITE);
 
+        editImageNote.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        editVoiceIcon.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+
     }
 
     private void dayModeEdit()
@@ -248,6 +253,10 @@ public class EditNotes extends AppCompatActivity {
         editRelative.setBackgroundResource(R.drawable.blue_bg_corner_radius);
 
         topTextEdit.setTextColor(Color.BLACK);
+
+        editImageNote.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        editVoiceIcon.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
     }
 

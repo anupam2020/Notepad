@@ -42,7 +42,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
     String title="",checkedState="";
 
-    boolean isChecked=false;
+    boolean isFav;
 
     FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
     DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notes");
@@ -63,26 +63,11 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
 
-
-        favorites.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position).getMyKey())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        favorites.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                        {
-
-                            Log.d("dataSnapshot",dataSnapshot.getKey());
-                            if(dataSnapshot.getKey().equals("State"))
-                            {
-                                checkedState=dataSnapshot.getValue().toString();
-                                Log.d("title",checkedState);
-                            }
-                            break;
-
-                        }
-
-                        if(checkedState.equals("true"))
+                        if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(arrayList.get(position).getMyKey()))
                         {
                             holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
                         }
@@ -96,7 +81,6 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
 
-                        DynamicToast.makeError(context,error.getMessage(),2000).show();
                     }
                 });
 
@@ -126,43 +110,46 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
             @Override
             public void onClick(View v) {
 
-                if(!checkedState.equals("true"))
-                {
-                    holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
-                    isChecked=true;
+                isFav=true;
 
-                }
-                else
-                {
-                    holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
-                    isChecked=false;
-                }
-
-
-                HashMap map=new HashMap();
-                map.put("State",isChecked);
-
-                favorites.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position).getMyKey())
-                        .setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                favorites.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if(task.isSuccessful())
+                        if(isFav)
                         {
+                            if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(arrayList.get(position).getMyKey()))
+                            {
+                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
+                                        .child(arrayList.get(position).getMyKey()).removeValue();
+                                isFav=false;
 
-                            DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_yellow_star_24),
-                                    context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
+                                holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
+                            }
+                            else
+                            {
+                                HashMap map=new HashMap();
+                                map.put("Fav",isFav);
 
+                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
+                                        .child(arrayList.get(position).getMyKey()).setValue(map);
+                                isFav=false;
+
+                                holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
+                            }
                         }
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
 
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
                 });
+
+
+
 
 
             }

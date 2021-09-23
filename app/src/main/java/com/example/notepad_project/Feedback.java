@@ -101,7 +101,7 @@ public class Feedback extends Fragment {
                 //map.put("Name",firebaseAuth.getCurrentUser().getDisplayName());
                 map.put("Feedback",feedback);
 
-                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).push().setValue(map)
+                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).setValue(map)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -141,7 +141,7 @@ public class Feedback extends Fragment {
                 map.put("Feedback",feedback);
 
 
-                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).push().setValue(map)
+                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).setValue(map)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -180,7 +180,7 @@ public class Feedback extends Fragment {
                 //map.put("Name",firebaseAuth.getCurrentUser().getEmail());
                 map.put("Feedback",feedback);
 
-                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).push().setValue(map)
+                reference.child(firebaseAuth.getCurrentUser().getUid()).child(username).setValue(map)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
