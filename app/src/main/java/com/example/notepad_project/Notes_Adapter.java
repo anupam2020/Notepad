@@ -69,11 +69,11 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                         if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(arrayList.get(position).getMyKey()))
                         {
-                            holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
+                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
                         }
                         else
                         {
-                            holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
+                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
                         }
 
                     }
@@ -124,7 +124,10 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                         .child(arrayList.get(position).getMyKey()).removeValue();
                                 isFav=false;
 
-                                holder.star.setImageResource(R.drawable.ic_baseline_star_border_24);
+                                holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+
+                                DynamicToast.make(context, "Removed from Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_remove_24),
+                                        context.getResources().getColor(R.color.red), context.getResources().getColor(R.color.black), 2000).show();
                             }
                             else
                             {
@@ -135,7 +138,10 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                         .child(arrayList.get(position).getMyKey()).setValue(map);
                                 isFav=false;
 
-                                holder.star.setImageResource(R.drawable.ic_baseline_yellow_star_24);
+                                holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
+
+                                DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_added_24),
+                                        context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
                             }
                         }
 
