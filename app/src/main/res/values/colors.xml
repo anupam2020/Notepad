@@ -23,4 +23,5 @@
     <color name="notes_blue">#80039BE5</color>
     <color name="very_light_blue">#08029AE6</color>
     <color name="notes_status_bar_blue">#BF029AE6</color>
+    <color name="verify_blue">#2196F3</color>
 </resources>

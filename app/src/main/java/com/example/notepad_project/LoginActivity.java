@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private RelativeLayout relative;
 
-    private TextView subText,signUp;
+    private TextView subText,signUp,forgot;
 
     private Button login;
 
@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG="GOOGLEAUTH";
 
-    private ImageView googleBtn,twitterBtn;
+    private ImageView googleBtn,twitterBtn,facebookBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +81,11 @@ public class LoginActivity extends AppCompatActivity {
 
         subText=findViewById(R.id.loginSubText);
         signUp=findViewById(R.id.loginSignUp);
+        forgot=findViewById(R.id.loginForgotPassword);
 
         googleBtn=findViewById(R.id.loginGoogleButton);
         twitterBtn=findViewById(R.id.loginTwitterButton);
+        facebookBtn=findViewById(R.id.loginFacebookButton);
 
         relative=findViewById(R.id.loginRelative);
 
@@ -154,6 +156,57 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent=new Intent(LoginActivity.this,TwitterActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
+            }
+        });
+
+
+        facebookBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+               // CODE HERE
+            }
+        });
+
+
+
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.show();
+                dialog.setContentView(R.layout.loading_bg);
+                dialog.setCancelable(false);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                if(email.getText().toString().isEmpty())
+                {
+                    dialog.dismiss();
+                    DynamicToast.makeWarning(LoginActivity.this,"Please enter your email!",2000).show();
+                }
+                else
+                {
+                    firebaseAuth.sendPasswordResetEmail(email.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful())
+                            {
+                                dialog.dismiss();
+                                DynamicToast.make(LoginActivity.this, "Password reset link was sent to your email!", getResources().getDrawable(R.drawable.ic_outline_mark_email_read_24),
+                                        getResources().getColor(R.color.teal_200), getResources().getColor(R.color.black), 2000).show();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            dialog.dismiss();
+                            DynamicToast.makeError(LoginActivity.this,e.getMessage(),2000).show();
+                        }
+                    });
+                }
+
             }
         });
 

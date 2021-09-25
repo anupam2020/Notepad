@@ -26,14 +26,14 @@ import java.util.ArrayList;
 
 public class NotesFragment extends Fragment {
 
-    RecyclerView recyclerView;
-    public static Notes_Adapter adapter;
-    ArrayList<Notes_Model> arrayList;
+    private RecyclerView recyclerView;
+    private Notes_Adapter adapter;
+    private ArrayList<Notes_Model> arrayList;
 
-    FirebaseAuth showNotesAuth;
-    DatabaseReference showNotesRef;
+    private FirebaseAuth showNotesAuth;
+    private DatabaseReference showNotesRef;
 
-    ProgressDialog dialog;
+    private ProgressDialog dialog;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -44,6 +44,7 @@ public class NotesFragment extends Fragment {
         arrayList=new ArrayList<>();
         adapter=new Notes_Adapter(arrayList,getActivity());
         recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         dialog=new ProgressDialog(getActivity());
 
@@ -71,6 +72,7 @@ public class NotesFragment extends Fragment {
                 }
 
                 adapter.notifyDataSetChanged();
+
 
                 dialog.dismiss();
             }

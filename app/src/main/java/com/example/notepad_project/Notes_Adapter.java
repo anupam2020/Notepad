@@ -63,11 +63,15 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
 
+        //Log.d("Size", String.valueOf(arrayList.size()));
+
+        String key=arrayList.get(position).getMyKey();
+
         favorites.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(arrayList.get(position).getMyKey()))
+                        if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(key))
                         {
                             holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
                         }
@@ -98,7 +102,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                 //Log.d("Intent Key",arrayList.get(position).getMyKey());
 
                 Intent intent=new Intent(context,Title_Description.class);
-                intent.putExtra("key",arrayList.get(position).getMyKey());
+                intent.putExtra("key",key);
                 context.startActivity(intent);
 
             }
@@ -118,10 +122,10 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                         if(isFav)
                         {
-                            if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(arrayList.get(position).getMyKey()))
+                            if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(key))
                             {
                                 favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
-                                        .child(arrayList.get(position).getMyKey()).removeValue();
+                                        .child(key).removeValue();
                                 isFav=false;
 
                                 holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
@@ -135,7 +139,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                 map.put("Fav",isFav);
 
                                 favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
-                                        .child(arrayList.get(position).getMyKey()).setValue(map);
+                                        .child(key).setValue(map);
                                 isFav=false;
 
                                 holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
@@ -153,9 +157,6 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                     }
                 });
-
-
-
 
 
             }
@@ -180,7 +181,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             case R.id.editNote:
 
                                 Intent intent=new Intent(context,EditNotes.class);
-                                intent.putExtra("key",arrayList.get(position).getMyKey());
+                                intent.putExtra("key",key);
                                 context.startActivity(intent);
                                 break;
 
@@ -188,8 +189,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             case R.id.shareNote:
 
 
-                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position)
-                                        .getMyKey()).addValueEventListener(new ValueEventListener() {
+                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -228,15 +228,20 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                             case R.id.deleteNote:
 
-                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(arrayList.get(position)
-                                        .getMyKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         if(task.isSuccessful())
                                         {
+
+                                            favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                                    .removeValue();
+
+
                                             DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                     context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
@@ -247,8 +252,11 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                     }
                                 });
 
+                                notifyDataSetChanged();
+
                                 break;
                         }
+
 
                         return true;
                     }

@@ -151,7 +151,7 @@ public class Verification extends Fragment {
                                         {
                                             dialog.dismiss();
                                             DynamicToast.make(getActivity(), "Email Verification Link Sent!", getResources().getDrawable(R.drawable.ic_outline_mark_email_read_24),
-                                                    getResources().getColor(R.color.blue), getResources().getColor(R.color.black), 2000).show();
+                                                    getResources().getColor(R.color.teal_200), getResources().getColor(R.color.black), 2000).show();
                                         }
 
                                     }
