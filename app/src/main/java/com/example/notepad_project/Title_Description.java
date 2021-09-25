@@ -43,7 +43,7 @@ public class Title_Description extends AppCompatActivity {
     private TextView title,des;
 
     private FirebaseAuth tdAuth;
-    private DatabaseReference tdRef;
+    private DatabaseReference tdRef,favRef;
 
     private String key;
 
@@ -75,6 +75,7 @@ public class Title_Description extends AppCompatActivity {
 
         tdAuth=FirebaseAuth.getInstance();
         tdRef= FirebaseDatabase.getInstance().getReference("Notes");
+        favRef= FirebaseDatabase.getInstance().getReference("Favorites");
 
         key=getIntent().getStringExtra("key");
 
@@ -216,6 +217,10 @@ public class Title_Description extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                             getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+
+                                    favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
                                     startActivity(new Intent(Title_Description.this,NotesActivity.class));
                                     finishAffinity();
                                 }

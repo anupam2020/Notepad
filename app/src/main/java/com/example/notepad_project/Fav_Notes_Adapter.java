@@ -2,8 +2,6 @@ package com.example.notepad_project;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -34,9 +30,9 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder> {
+public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.NotesViewHolder> {
 
-    ArrayList<Notes_Model> arrayList;
+    ArrayList<Fav_Notes_Model> arrayList;
     Context context;
     String uid="";
 
@@ -49,7 +45,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
     DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
 
-    public Notes_Adapter(ArrayList<Notes_Model> arrayList, Context context) {
+    public Fav_Notes_Adapter(ArrayList<Fav_Notes_Model> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }
@@ -57,7 +53,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
     @NonNull
     @Override
     public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new NotesViewHolder(LayoutInflater.from(context).inflate(R.layout.item_notes,parent,false));
+        return new NotesViewHolder(LayoutInflater.from(context).inflate(R.layout.item_fav_notes,parent,false));
     }
 
     @Override
@@ -135,14 +131,8 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             }
                             else
                             {
-                                String title=arrayList.get(position).title;
-                                String des=arrayList.get(position).description;
-                                String time=arrayList.get(position).time;
-
                                 HashMap map=new HashMap();
-                                map.put("Title",title);
-                                map.put("Description",des);
-                                map.put("Time",time);
+                                map.put("Fav",isFav);
 
                                 favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
                                         .child(key).setValue(map);
@@ -195,7 +185,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             case R.id.shareNote:
 
 
-                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).addValueEventListener(new ValueEventListener() {
+                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -212,13 +202,13 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                         }
 
-                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
 
                                         String shareBody = title;
 
                                         shareIntent.setType("text/plain");
 
-                                        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
 
                                         context.startActivity(Intent.createChooser(shareIntent, "Share via"));
 
@@ -234,14 +224,14 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                             case R.id.deleteNote:
 
-                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         if(task.isSuccessful())
                                         {
 
-                                            favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                            reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
                                                     .removeValue();
 
 
@@ -288,10 +278,10 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title=itemView.findViewById(R.id.itemTitle);
-            more=itemView.findViewById(R.id.itemMore);
-            star=itemView.findViewById(R.id.itemStar);
-            time=itemView.findViewById(R.id.textDateTime);
+            title=itemView.findViewById(R.id.favItemTitle);
+            more=itemView.findViewById(R.id.favItemMore);
+            star=itemView.findViewById(R.id.favItemStar);
+            time=itemView.findViewById(R.id.favTextDateTime);
         }
     }
 }

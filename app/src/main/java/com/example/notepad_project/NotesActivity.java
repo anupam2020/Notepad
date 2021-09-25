@@ -160,7 +160,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         });
 
 
-        nameRef.child(firebaseAuth.getCurrentUser().getUid()).child("Profile").addListenerForSingleValueEvent(new ValueEventListener() {
+        nameRef.child(firebaseAuth.getCurrentUser().getUid()).child("Profile")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -252,6 +253,10 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 topText.setText("Notes");
                 break;
 
+            case R.id.favNotes:
+                startActivity(new Intent(NotesActivity.this,FavoritesActivity.class));
+                break;
+
             case R.id.emailVerification:
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
                 topText.setText("Verification");
@@ -262,7 +267,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(new Intent(NotesActivity.this,MainActivity.class));
                 finish();
                 break;
-
 
             case R.id.feedback:
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Feedback()).commit();

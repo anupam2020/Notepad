@@ -32,6 +32,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/white_border_radius_low.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_add_notes.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_edit_notes.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_favorites.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/activity_notes.xml" value="0.264" />
@@ -45,6 +46,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_profile.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/fragment_verification.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/header_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_fav_notes.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_notes.xml" value="0.264" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/loading_bg.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/notes_layout.xml" value="0.264" />
