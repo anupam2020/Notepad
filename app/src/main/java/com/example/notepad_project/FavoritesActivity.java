@@ -30,7 +30,7 @@ public class FavoritesActivity extends AppCompatActivity {
     private Fav_Notes_Adapter adapter;
     private ArrayList<Fav_Notes_Model> arrayList;
 
-    private DatabaseReference favNotesRef;
+    private DatabaseReference favNotesRef,dRef;
     private FirebaseAuth favNotesAuth;
 
     private ProgressDialog dialog;
@@ -61,6 +61,8 @@ public class FavoritesActivity extends AppCompatActivity {
 
         favNotesAuth=FirebaseAuth.getInstance();
         favNotesRef= FirebaseDatabase.getInstance().getReference("Favorites");
+
+        dRef= FirebaseDatabase.getInstance().getReference("Notes");
 
         dialog.show();
         dialog.setContentView(R.layout.loading_bg);
