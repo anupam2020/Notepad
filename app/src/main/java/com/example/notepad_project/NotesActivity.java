@@ -50,7 +50,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     private DatabaseReference nameRef;
 
-    private ImageView logOut,menu,addNotes;
+    private ImageView logOut,menu,addNotes,favNotes;
 
     private DrawerLayout drawer;
 
@@ -75,7 +75,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         topText=findViewById(R.id.notesTopText);
 
         nav=findViewById(R.id.navView);
-        menu=findViewById(R.id.notesMenu);
 
         topRelative=findViewById(R.id.notesRelative2);
 
@@ -90,8 +89,10 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         hName=view.findViewById(R.id.headerNameText);
         hEmail=view.findViewById(R.id.headerEmailText);
 
+        menu=findViewById(R.id.notesMenu);
         logOut=findViewById(R.id.notesLogout);
         addNotes=findViewById(R.id.addNotesIcon);
+        favNotes=findViewById(R.id.favNotesIcon);
 
         firebaseAuth=FirebaseAuth.getInstance();
 
@@ -204,6 +205,14 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
+        favNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(NotesActivity.this,FavoritesActivity.class));
+            }
+        });
+
 
     }
 
@@ -211,29 +220,35 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(NotesActivity.this);
-        builder.setTitle("Warning");
-        builder.setMessage("Please select any one!");
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else
+        {
+            AlertDialog.Builder builder=new AlertDialog.Builder(NotesActivity.this);
+            builder.setTitle("Warning");
+            builder.setMessage("Please select any one!");
 
-        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                finishAffinity();
-            }
-        });
+                    finishAffinity();
+                }
+            });
 
-        builder.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            builder.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                firebaseAuth.signOut();
-                startActivity(new Intent(NotesActivity.this,MainActivity.class));
-                finish();
-            }
-        });
+                    firebaseAuth.signOut();
+                    startActivity(new Intent(NotesActivity.this,MainActivity.class));
+                    finish();
+                }
+            });
 
-        builder.show();
+            builder.show();
+        }
     }
 
 
@@ -315,6 +330,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         addNotes.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
+        favNotes.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
         topText.setTextColor(Color.WHITE);
 
         //frameLayout.setBackgroundColor(Color.WHITE);
@@ -334,6 +351,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         logOut.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         addNotes.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        favNotes.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         topText.setTextColor(Color.BLACK);
 

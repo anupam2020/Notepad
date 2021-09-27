@@ -42,7 +42,7 @@ public class EditNotes extends AppCompatActivity {
     private ImageView tick,addImgIcon,editImageNote,editVoiceIcon;
 
     private FirebaseAuth editAuth;
-    private DatabaseReference editRef;
+    private DatabaseReference editRef,favRef;
 
     private String key,nTitle,nDes,nDate;
 
@@ -85,6 +85,7 @@ public class EditNotes extends AppCompatActivity {
 
         editAuth=FirebaseAuth.getInstance();
         editRef= FirebaseDatabase.getInstance().getReference("Notes");
+        favRef= FirebaseDatabase.getInstance().getReference("Favorites");
 
         key=getIntent().getStringExtra("key");
 
@@ -178,6 +179,9 @@ public class EditNotes extends AppCompatActivity {
                         {
                             Log.d("Path", String.valueOf(editRef.child(editAuth.getCurrentUser().getUid()).child(key)));
                             dialog.dismiss();
+
+                            favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key).updateChildren(map);
+
                             DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                     getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
 
