@@ -1,16 +1,17 @@
 package com.example.notepad_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.ArrayList;
 
-public class FavoritesActivity extends AppCompatActivity {
+public class FavNotesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private Fav_Notes_Adapter adapter;
@@ -35,24 +36,18 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private ProgressDialog dialog;
 
-    private RelativeLayout favRelative;
-
-    private TextView topTextFav;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorites);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        recyclerView=findViewById(R.id.favRecycler);
 
-        dialog=new ProgressDialog(this);
+        recyclerView=view.findViewById(R.id.favRecycler);
 
-        topTextFav=findViewById(R.id.favNotesTopText);
-        favRelative=findViewById(R.id.favNotesRelative1);
+        dialog=new ProgressDialog(getActivity());
 
         arrayList=new ArrayList<>();
-        adapter=new Fav_Notes_Adapter(arrayList,this);
+        adapter=new Fav_Notes_Adapter(arrayList,getActivity());
         recyclerView.setAdapter(adapter);
 
         favNotesAuth=FirebaseAuth.getInstance();
@@ -64,6 +59,7 @@ public class FavoritesActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.loading_bg);
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
 
         favNotesRef.child(favNotesAuth.getCurrentUser().getUid()).child("FavList").addValueEventListener(new ValueEventListener() {
             @Override
@@ -88,44 +84,19 @@ public class FavoritesActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
                 dialog.dismiss();
-                DynamicToast.makeError(FavoritesActivity.this,error.getMessage(),2000).show();
+                DynamicToast.makeError(getActivity(),error.getMessage(),2000).show();
 
             }
         });
 
 
-        if(NotesActivity.check)
-        {
-            nightModeEdit();
-        }
-        else
-        {
-            dayModeEdit();
-        }
-
     }
 
-    private void nightModeEdit()
-    {
 
-        getWindow().setStatusBarColor(getResources().getColor(R.color.black));
-
-        favRelative.setBackgroundResource(R.drawable.black_bg_corner_radius);
-
-        topTextFav.setTextColor(Color.WHITE);
-
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_fav_notes, container, false);
     }
-
-    private void dayModeEdit()
-    {
-
-        getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
-
-        favRelative.setBackgroundResource(R.drawable.blue_bg_corner_radius);
-
-        topTextFav.setTextColor(Color.BLACK);
-
-    }
-
 }

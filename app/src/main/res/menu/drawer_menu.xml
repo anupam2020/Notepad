@@ -15,11 +15,6 @@
             android:icon="@drawable/ic_outline_sticky_note_2_24"
             android:id="@+id/notes" />
 
-        <item
-            android:title="Favorites"
-            android:icon="@drawable/ic_baseline_favorite_border_24"
-            android:id="@+id/favNotes" />
-
     </group>
 
 
@@ -73,9 +68,9 @@
                     android:id="@+id/shareApp"/>
 
                 <item
-                    android:title="About Us"
+                    android:title="More"
                     android:icon="@drawable/ic_outline_info_24"
-                    android:id="@+id/about"/>
+                    android:id="@+id/more"/>
 
             </group>
 

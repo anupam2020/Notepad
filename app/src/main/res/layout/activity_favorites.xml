@@ -13,16 +13,6 @@
         android:background="@drawable/blue_bg_corner_radius"
         android:id="@+id/favNotesRelative1">
 
-<!--        <ImageView-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:src="@drawable/ic_baseline_logout_24"-->
-<!--            android:id="@+id/favNotesLogout"-->
-<!--            app:tint="@color/black"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_marginRight="15dp"/>-->
-
 
         <TextView
             android:layout_width="wrap_content"

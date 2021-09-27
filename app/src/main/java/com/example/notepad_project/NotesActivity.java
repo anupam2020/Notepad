@@ -50,7 +50,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     private DatabaseReference nameRef;
 
-    private ImageView logOut,menu,addNotes,favNotes;
+    private ImageView logOut,menu,addNotes;
 
     private DrawerLayout drawer;
 
@@ -92,13 +92,12 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         menu=findViewById(R.id.notesMenu);
         logOut=findViewById(R.id.notesLogout);
         addNotes=findViewById(R.id.addNotesIcon);
-        favNotes=findViewById(R.id.favNotesIcon);
 
         firebaseAuth=FirebaseAuth.getInstance();
 
         nameRef= FirebaseDatabase.getInstance().getReference("Users");
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new NotesFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new NotesFavNotesFragment()).commit();
         nav.getMenu().getItem(1).setChecked(true);
         topText.setText("Notes");
 
@@ -205,14 +204,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             }
         });
 
-        favNotes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(NotesActivity.this,FavoritesActivity.class));
-            }
-        });
-
 
     }
 
@@ -264,12 +255,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 break;
 
             case R.id.notes:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new NotesFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new NotesFavNotesFragment()).commit();
                 topText.setText("Notes");
-                break;
-
-            case R.id.favNotes:
-                startActivity(new Intent(NotesActivity.this,FavoritesActivity.class));
                 break;
 
             case R.id.emailVerification:
@@ -292,8 +279,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 shareApp();
                 break;
 
-            case R.id.about:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new AboutUs()).commit();
+            case R.id.more:
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new More()).commit();
                 topText.setText("About Us");
                 break;
         }
@@ -330,8 +317,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         addNotes.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
-        favNotes.setImageTintList(ColorStateList.valueOf(Color.WHITE));
-
         topText.setTextColor(Color.WHITE);
 
         //frameLayout.setBackgroundColor(Color.WHITE);
@@ -351,8 +336,6 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         logOut.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         addNotes.setImageTintList(ColorStateList.valueOf(Color.BLACK));
-
-        favNotes.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         topText.setTextColor(Color.BLACK);
 
