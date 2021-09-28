@@ -14,9 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Notepad">
         <activity
-            android:name=".FavoritesActivity"
-            android:exported="true" />
-        <activity
             android:name=".AddNotesActivity"
             android:exported="true"
             android:screenOrientation="portrait"

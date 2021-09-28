@@ -57,7 +57,7 @@ public class EditNotes extends AppCompatActivity {
 
     private int code=123,speech=111;
 
-    private int state = 0 ;
+    private static int state = -1 ;
 
 
     @Override
@@ -122,10 +122,17 @@ public class EditNotes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent speechIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to text");
-                startActivityForResult(speechIntent,speech);
+                if(state==-1)
+                {
+                    DynamicToast.makeWarning(EditNotes.this,"Sorry!",2000).show();
+                }
+                else
+                {
+                    Intent speechIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to text");
+                    startActivityForResult(speechIntent,speech);
+                }
 
             }
         });
@@ -177,11 +184,31 @@ public class EditNotes extends AppCompatActivity {
 
                         if(task.isSuccessful())
                         {
-                            Log.d("Path", String.valueOf(editRef.child(editAuth.getCurrentUser().getUid()).child(key)));
+
+
+                            favRef.child(editAuth.getCurrentUser().getUid()).child("FavList")
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                            for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                            {
+                                                if(dataSnapshot.getKey().equals(key))
+                                                {
+                                                    favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                                            .updateChildren(map);
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
                             dialog.dismiss();
-
-                            favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key).updateChildren(map);
-
                             DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                     getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
 
@@ -214,7 +241,7 @@ public class EditNotes extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==speech)
+        if(requestCode==speech && data!=null)
         {
 
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);

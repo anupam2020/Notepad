@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
@@ -34,10 +36,11 @@ import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder> {
+public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder>{
 
     ArrayList<Notes_Model> arrayList;
     Context context;
+
     String uid="";
 
     String title="",checkedState="";

@@ -55,7 +55,7 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private int code=123,speech=111;
 
-    private int state = 0 ;
+    private static int state = -1 ;
 
     private RecyclerView recyclerView;
 
@@ -92,14 +92,23 @@ public class AddNotesActivity extends AppCompatActivity {
         notesAuth=FirebaseAuth.getInstance();
         notesDatabase= FirebaseDatabase.getInstance().getReference("Notes");
 
+
+
         addVoiceIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent speechIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to text");
-                startActivityForResult(speechIntent,speech);
+                if(state==-1)
+                {
+                    DynamicToast.makeWarning(AddNotesActivity.this,"Sorry!",2000).show();
+                }
+                else
+                {
+                    Intent speechIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to text");
+                    startActivityForResult(speechIntent,speech);
+                }
 
             }
         });
@@ -174,7 +183,7 @@ public class AddNotesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==speech)
+        if(requestCode==speech && data!=null)
         {
 
             ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -183,7 +192,7 @@ public class AddNotesActivity extends AppCompatActivity {
                 String strTitle=title.getText().toString();
                 title.setText(strTitle+" "+result.get(0));
             }
-            else
+            else if(state==0)
             {
                 String strDes=des.getText().toString();
                 des.setText(strDes+" "+result.get(0));
