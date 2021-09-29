@@ -179,26 +179,20 @@ public class EditNotes extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-
                         Log.d("Task",task.toString());
 
                         if(task.isSuccessful())
                         {
 
-
                             favRef.child(editAuth.getCurrentUser().getUid()).child("FavList")
-                                    .addValueEventListener(new ValueEventListener() {
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                            for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                            if(snapshot.hasChild(key))
                                             {
-                                                if(dataSnapshot.getKey().equals(key))
-                                                {
-                                                    favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
-                                                            .updateChildren(map);
-                                                    break;
-                                                }
+                                                favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                                        .updateChildren(map);
                                             }
                                         }
 

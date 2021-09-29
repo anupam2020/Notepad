@@ -23,12 +23,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.text.SimpleDateFormat;
@@ -43,7 +45,7 @@ public class AddNotesActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
 
     private EditText title,des;
-    private ImageView tick,addImgIcon,addImageNote,addVoiceIcon;
+    private ImageView tick,addImgIcon,addVoiceIcon;
 
     private FirebaseAuth notesAuth;
     private DatabaseReference notesDatabase;
@@ -63,6 +65,13 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private TextView topTextAdd;
 
+    private Uri multipleURI;
+
+    private StorageReference storageReference;
+
+    private ArrayList<Images_Model> arrayList;
+
+    Images_Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +85,7 @@ public class AddNotesActivity extends AppCompatActivity {
         des=findViewById(R.id.addNotesDes);
         topTextAdd=findViewById(R.id.addTopText);
 
-        recyclerView=findViewById(R.id.addNotesRecyclerView);
+        recyclerView=findViewById(R.id.addImageRecycler);
 
         addRelative=findViewById(R.id.addNotesRelative1);
 
@@ -89,9 +98,15 @@ public class AddNotesActivity extends AppCompatActivity {
 
         dialog=new ProgressDialog(AddNotesActivity.this);
 
+        arrayList=new ArrayList<>();
+
+        adapter=new Images_Adapter(arrayList,AddNotesActivity.this);
+        recyclerView.setAdapter(adapter);
+
         notesAuth=FirebaseAuth.getInstance();
         notesDatabase= FirebaseDatabase.getInstance().getReference("Notes");
 
+        storageReference=FirebaseStorage.getInstance().getReference("Images");
 
 
         addVoiceIcon.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +177,7 @@ public class AddNotesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //openGallery();
+                openGallery();
             }
         });
 
@@ -179,9 +194,71 @@ public class AddNotesActivity extends AppCompatActivity {
     }
 
 
+    private void openGallery()
+    {
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(Intent.createChooser(intent,"Please select your files"),code);
+
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        if(requestCode == code && resultCode == RESULT_OK && data!=null)
+        {
+
+            for(int i=0;i<data.getClipData().getItemCount();i++)
+            {
+
+                multipleURI=data.getClipData().getItemAt(i).getUri();
+                arrayList.add(new Images_Model(multipleURI.toString()));
+
+                tick.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if(!title.getText().toString().isEmpty() || !des.getText().toString().isEmpty())
+                        {
+
+                            storageReference.child(notesAuth.getCurrentUser().getUid()).child("Image_"+System.nanoTime())
+                                    .putFile(multipleURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
+                                }
+                            });
+
+                        }
+
+                    }
+                });
+
+            }
+
+            adapter.notifyDataSetChanged();
+
+        }
+
+
+
+
+
 
         if(requestCode==speech && data!=null)
         {
@@ -219,6 +296,8 @@ public class AddNotesActivity extends AppCompatActivity {
                     dialog.dismiss();
                     DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                             getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

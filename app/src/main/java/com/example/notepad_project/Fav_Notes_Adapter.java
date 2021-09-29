@@ -36,7 +36,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
     Context context;
     String uid="";
 
-    String title="",checkedState="";
+    String favdes="";
 
     boolean isFav;
 
@@ -69,11 +69,11 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
                         if(snapshot.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").hasChild(key))
                         {
-                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
+                            holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
                         }
                         else
                         {
-                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                            holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
                         }
 
                     }
@@ -85,8 +85,9 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                 });
 
 
-        holder.title.setText(arrayList.get(position).title);
-        holder.time.setText(arrayList.get(position).time);
+
+        holder.favtitle.setText(arrayList.get(position).title);
+        holder.favtime.setText(arrayList.get(position).time);
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +106,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
         });
 
 
-        holder.star.setOnClickListener(new View.OnClickListener() {
+        holder.favstar.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
@@ -124,25 +125,25 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                         .child(key).removeValue();
                                 isFav=false;
 
-                                holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                                holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
 
                                 DynamicToast.make(context, "Removed from Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_remove_24),
                                         context.getResources().getColor(R.color.red), context.getResources().getColor(R.color.black), 2000).show();
                             }
-                            else
-                            {
-                                HashMap map=new HashMap();
-                                map.put("Fav",isFav);
-
-                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
-                                        .child(key).setValue(map);
-                                isFav=false;
-
-                                holder.star.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
-
-                                DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_added_24),
-                                        context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
-                            }
+//                            else
+//                            {
+//                                HashMap map=new HashMap();
+//                                map.put("Fav",isFav);
+//
+//                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
+//                                        .child(key).setValue(map);
+//                                isFav=false;
+//
+//                                holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
+//
+//                                DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_added_24),
+//                                        context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
+//                            }
                         }
 
 
@@ -160,7 +161,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
 
 
-        holder.more.setOnClickListener(new View.OnClickListener() {
+        holder.favmore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -195,8 +196,8 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                             Log.d("dataSnapshot",dataSnapshot.getKey());
                                             if(dataSnapshot.getKey().equals("Description"))
                                             {
-                                                title=dataSnapshot.getValue().toString();
-                                                Log.d("title",title);
+                                                favdes=dataSnapshot.getValue().toString();
+                                                Log.d("title",favdes);
                                             }
                                             break;
 
@@ -204,7 +205,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
                                         Intent shareIntent = new Intent(Intent.ACTION_SEND);
 
-                                        String shareBody = title;
+                                        String shareBody = favdes;
 
                                         shareIntent.setType("text/plain");
 
@@ -270,18 +271,18 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
     public class NotesViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title;
-        ImageView more;
-        ImageView star;
-        TextView time;
+        TextView favtitle;
+        ImageView favmore;
+        ImageView favstar;
+        TextView favtime;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            title=itemView.findViewById(R.id.favItemTitle);
-            more=itemView.findViewById(R.id.favItemMore);
-            star=itemView.findViewById(R.id.favItemStar);
-            time=itemView.findViewById(R.id.favTextDateTime);
+            favtitle=itemView.findViewById(R.id.favItemTitle);
+            favmore=itemView.findViewById(R.id.favItemMore);
+            favstar=itemView.findViewById(R.id.favItemStar);
+            favtime=itemView.findViewById(R.id.favTextDateTime);
         }
     }
 }

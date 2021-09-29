@@ -104,11 +104,20 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/addImageRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextLayout2"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3" />
+
+
                 <ImageView
                     android:id="@+id/addNotesTickButton"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_below="@id/editTextLayout2"
+                    android:layout_below="@id/addImageRecycler"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="15dp"
                     android:src="@drawable/tick" />
