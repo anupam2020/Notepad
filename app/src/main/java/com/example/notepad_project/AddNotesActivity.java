@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -71,7 +72,11 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private ArrayList<Images_Model> arrayList;
 
-    Images_Adapter adapter;
+    private Images_Adapter adapter;
+
+    private static ArrayList<Uri> uriArrayList;
+
+    private static Uri myURI[];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +104,9 @@ public class AddNotesActivity extends AppCompatActivity {
         dialog=new ProgressDialog(AddNotesActivity.this);
 
         arrayList=new ArrayList<>();
+        uriArrayList=new ArrayList<>();
 
-        adapter=new Images_Adapter(arrayList,AddNotesActivity.this);
+        adapter=new Images_Adapter(arrayList,AddNotesActivity.this,uriArrayList);
         recyclerView.setAdapter(adapter);
 
         notesAuth=FirebaseAuth.getInstance();
@@ -146,7 +152,6 @@ public class AddNotesActivity extends AppCompatActivity {
             }
         });
 
-
         tick.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -159,6 +164,29 @@ public class AddNotesActivity extends AppCompatActivity {
             String textTitle=title.getText().toString();
             String textDes=des.getText().toString();
             String strTime=simpleDateFormat.format(date);
+
+
+            myURI=new Uri[uriArrayList.size()];
+
+//            Log.d("uriArrayList SIZE", String.valueOf(uriArrayList.size()));
+//
+//            for(int i=0;i<uriArrayList.size();i++)
+//            {
+//                Log.d("uriArrayList", String.valueOf(uriArrayList.get(i)));
+//            }
+
+            Log.d("myURI SIZE", String.valueOf(myURI.length));
+
+            for(int i=0;i<uriArrayList.size();i++)
+            {
+                myURI[i]=uriArrayList.get(i);
+            }
+
+            for(int i=0;i<arrayList.size();i++)
+            {
+                Log.d("myUri", String.valueOf(myURI[i]));
+            }
+
 
             if(textTitle.isEmpty() && textDes.isEmpty())
             {
@@ -212,42 +240,51 @@ public class AddNotesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        if(requestCode == code && resultCode == RESULT_OK && data!=null)
+        if(requestCode == code && resultCode == RESULT_OK && data.getData()!=null)
         {
 
-            for(int i=0;i<data.getClipData().getItemCount();i++)
+            ClipData cd=data.getClipData();
+
+            if(cd==null)
+            {
+                Uri uri=data.getData();
+                uriArrayList.add(uri);
+                arrayList.add(new Images_Model(uri.toString()));
+            }
+            else
             {
 
-                multipleURI=data.getClipData().getItemAt(i).getUri();
-                arrayList.add(new Images_Model(multipleURI.toString()));
+                for(int i=0;i<data.getClipData().getItemCount();i++)
+                {
 
-                tick.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    multipleURI=data.getClipData().getItemAt(i).getUri();
 
-                        if(!title.getText().toString().isEmpty() || !des.getText().toString().isEmpty())
-                        {
+                    uriArrayList.add(multipleURI);
 
-                            storageReference.child(notesAuth.getCurrentUser().getUid()).child("Image_"+System.nanoTime())
-                                    .putFile(multipleURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    arrayList.add(new Images_Model(multipleURI.toString()));
 
-                                    DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+//                    if(!title.getText().toString().isEmpty() || !des.getText().toString().isEmpty())
+//                    {
+//
+//                        storageReference.child(notesAuth.getCurrentUser().getUid()).child("Image_"+System.nanoTime())
+//                                .putFile(multipleURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                            @Override
+//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                                DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+//
+//                            }
+//                        }).addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//
+//                                DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
+//                            }
+//                        });
+//
+//                    }
 
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-
-                                    DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
-                                }
-                            });
-
-                        }
-
-                    }
-                });
+                }
 
             }
 
@@ -287,17 +324,46 @@ public class AddNotesActivity extends AppCompatActivity {
         map.put("Description",textDes);
         map.put("Time",strTime);
 
-        notesDatabase.child(notesAuth.getCurrentUser().getUid()).push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        DatabaseReference dRefPushed=notesDatabase.child(notesAuth.getCurrentUser().getUid()).push();
+
+        Log.d("GET KEY",dRefPushed.getKey());
+
+        notesDatabase.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
                 if(task.isSuccessful())
                 {
+
+                    if(myURI.length!=0)
+                    {
+
+                        for(int i=0;i<myURI.length;i++)
+                        {
+
+                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).child("Image_"+System.nanoTime())
+                                    .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
+                                }
+                            });
+
+                        }
+
+                    }
+
                     dialog.dismiss();
                     DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                             getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

@@ -15,11 +15,13 @@ import java.util.ArrayList;
 public class Images_Adapter extends RecyclerView.Adapter<Images_Adapter.ImageViewHolder> {
 
     ArrayList<Images_Model> arrayList;
+    ArrayList<Uri> uriArrayList;
     Context context;
 
-    public Images_Adapter(ArrayList<Images_Model> arrayList, Context context) {
+    public Images_Adapter(ArrayList<Images_Model> arrayList, Context context,ArrayList<Uri> uriArrayList) {
         this.arrayList = arrayList;
         this.context = context;
+        this.uriArrayList=uriArrayList;
     }
 
     @NonNull
@@ -31,13 +33,14 @@ public class Images_Adapter extends RecyclerView.Adapter<Images_Adapter.ImageVie
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
 
-        holder.img.setImageURI(Uri.parse(arrayList.get(position).url));
+        holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).url));
 
         holder.clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                arrayList.remove(position);
+                arrayList.remove(holder.getAdapterPosition());
+                uriArrayList.remove(holder.getAdapterPosition());
                 notifyDataSetChanged();
 
             }
