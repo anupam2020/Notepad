@@ -168,13 +168,6 @@ public class AddNotesActivity extends AppCompatActivity {
 
             myURI=new Uri[uriArrayList.size()];
 
-//            Log.d("uriArrayList SIZE", String.valueOf(uriArrayList.size()));
-//
-//            for(int i=0;i<uriArrayList.size();i++)
-//            {
-//                Log.d("uriArrayList", String.valueOf(uriArrayList.get(i)));
-//            }
-
             Log.d("myURI SIZE", String.valueOf(myURI.length));
 
             for(int i=0;i<uriArrayList.size();i++)
@@ -263,27 +256,6 @@ public class AddNotesActivity extends AppCompatActivity {
 
                     arrayList.add(new Images_Model(multipleURI.toString()));
 
-//                    if(!title.getText().toString().isEmpty() || !des.getText().toString().isEmpty())
-//                    {
-//
-//                        storageReference.child(notesAuth.getCurrentUser().getUid()).child("Image_"+System.nanoTime())
-//                                .putFile(multipleURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                                DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
-//
-//                            }
-//                        }).addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//
-//                                DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
-//                            }
-//                        });
-//
-//                    }
-
                 }
 
             }
@@ -291,8 +263,6 @@ public class AddNotesActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
 
         }
-
-
 
 
 
@@ -323,6 +293,7 @@ public class AddNotesActivity extends AppCompatActivity {
         map.put("Title",textTitle);
         map.put("Description",textDes);
         map.put("Time",strTime);
+        map.put("Count",myURI.length);
 
         DatabaseReference dRefPushed=notesDatabase.child(notesAuth.getCurrentUser().getUid()).push();
 
@@ -341,12 +312,17 @@ public class AddNotesActivity extends AppCompatActivity {
                         for(int i=0;i<myURI.length;i++)
                         {
 
-                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).child("Image_"+System.nanoTime())
+                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).child(String.valueOf(i))
                                     .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+
+
                                     DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+                                    dialog.dismiss();
+                                    DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -360,10 +336,12 @@ public class AddNotesActivity extends AppCompatActivity {
                         }
 
                     }
-
-                    dialog.dismiss();
-                    DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                    else
+                    {
+                        dialog.dismiss();
+                        DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                    }
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {

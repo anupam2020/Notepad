@@ -3,6 +3,7 @@ package com.example.notepad_project;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,11 +32,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Title_Description extends AppCompatActivity {
@@ -54,6 +58,16 @@ public class Title_Description extends AppCompatActivity {
     private RelativeLayout relativeLayout,rootRelative;
 
     private TextToSpeech textToSpeech;
+
+    private ArrayList<Images_Model> arrayList;
+
+    private Retrieved_Images_Adapter adapter;
+
+    private RecyclerView imagesRecycler;
+
+    private StorageReference storageReference;
+
+    private int noOfImages;
 
 
     @Override
@@ -77,9 +91,18 @@ public class Title_Description extends AppCompatActivity {
         tdRef= FirebaseDatabase.getInstance().getReference("Notes");
         favRef= FirebaseDatabase.getInstance().getReference("Favorites");
 
+        storageReference=FirebaseStorage.getInstance().getReference("Images");
+
+        arrayList=new ArrayList<>();
+        imagesRecycler=findViewById(R.id.recyclerViewTD);
+
+        adapter=new Retrieved_Images_Adapter(arrayList,Title_Description.this);
+        imagesRecycler.setAdapter(adapter);
+
         key=getIntent().getStringExtra("key");
 
         progressDialog=new ProgressDialog(this);
+
 
         progressDialog.show();
         progressDialog.setContentView(R.layout.loading_bg);
@@ -102,6 +125,40 @@ public class Title_Description extends AppCompatActivity {
                 String nDes=snapshot.child("Description").getValue().toString();
                 Log.d("Title",nDes);
                 des.setText(nDes);
+
+                String nCount=snapshot.child("Count").getValue().toString();
+                noOfImages=Integer.parseInt(nCount);
+                Log.d("No of Images", String.valueOf(noOfImages));
+
+
+                for(int i=0;i<noOfImages;i++)
+                {
+
+                    Log.d("i print", String.valueOf(i));
+
+                    storageReference.child(tdAuth.getCurrentUser().getUid()).child(key)
+                            .child(String.valueOf(i))
+                            .getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+
+                                    arrayList.add(new Images_Model(uri.toString()));
+                                    imagesRecycler.setAdapter(adapter);
+
+                                    Log.d("URL",uri.toString());
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Log.e("Exception",e.getMessage());
+                        }
+                    });
+
+                }
+
 
             }
 
@@ -160,6 +217,7 @@ public class Title_Description extends AppCompatActivity {
 
                     textToSpeech.speak(selectedText,TextToSpeech.QUEUE_FLUSH,null);
                 }
+
                 if(des.isFocused())
                 {
                     int startSelection=des.getSelectionStart();
@@ -171,19 +229,6 @@ public class Title_Description extends AppCompatActivity {
 
                     textToSpeech.speak(selectedText,TextToSpeech.QUEUE_FLUSH,null);
                 }
-
-
-
-
-
-//                if(title.isSelected())
-//                {
-//                    textToSpeech.speak(title.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
-//                }
-//                else
-//                {
-//                    textToSpeech.speak(des.getText().toString(),TextToSpeech.QUEUE_FLUSH,null);
-//                }
 
             }
         });
@@ -254,6 +299,12 @@ public class Title_Description extends AppCompatActivity {
 
             }
         });
+
+
+
+
+        //adapter.notifyDataSetChanged();
+
 
 
         if(new NotesActivity().check)
