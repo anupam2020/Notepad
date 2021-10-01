@@ -38,7 +38,7 @@ public class Retrieved_Images_Adapter extends RecyclerView.Adapter<Retrieved_Ima
 
         Picasso.get()
                 .load(arrayList.get(position).url)
-                .placeholder(R.drawable.loading_circle_color)
+                .placeholder(R.drawable.loading_green)
                 .into(holder.image);
 
 
