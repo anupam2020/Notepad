@@ -9,8 +9,8 @@
         android:layout_height="150dp"
         android:src="@drawable/color_note"
         android:id="@+id/itemImage"
-        android:layout_marginTop="15dp"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        />
 
     <ImageView
         android:layout_width="30dp"

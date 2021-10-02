@@ -252,6 +252,7 @@ public class Title_Description extends AppCompatActivity {
                         progressDialog.setCancelable(false);
                         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
+
                         tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -265,6 +266,27 @@ public class Title_Description extends AppCompatActivity {
 
 
                                     favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+                                    for(int i=0;i<noOfImages;i++)
+                                    {
+                                        storageReference.child(tdAuth.getCurrentUser().getUid())
+                                                .child(key)
+                                                .child(String.valueOf(i))
+                                                .delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+
+                                                        Log.d("Message","Success");
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+
+                                                Log.e("Message",e.getMessage());
+                                            }
+                                        });
+                                    }
 
                                     startActivity(new Intent(Title_Description.this,NotesActivity.class));
                                     finishAffinity();

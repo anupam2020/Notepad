@@ -87,8 +87,8 @@
         android:id="@+id/notesDescriptionTD"
         android:textSize="20dp"
         android:textColor="@color/very_light_black"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:layout_below="@id/notesTitleTD"
         android:textIsSelectable="true"/>
@@ -100,7 +100,8 @@
         android:id="@+id/recyclerViewTD"
         android:layout_below="@+id/notesDescriptionTD"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"/>
+        app:spanCount="3"
+        android:layout_marginTop="15dp"/>
 
 
 </RelativeLayout>

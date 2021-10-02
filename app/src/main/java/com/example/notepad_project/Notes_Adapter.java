@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +33,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.ArrayList;
@@ -38,19 +42,21 @@ import java.util.HashMap;
 
 public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder>{
 
-    ArrayList<Notes_Model> arrayList;
-    Context context;
+    private ArrayList<Notes_Model> arrayList;
+    private Context context;
 
-    String uid="";
+    private String title="";
 
-    String title="",checkedState="";
+    private boolean isFav;
 
-    boolean isFav;
+    private FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
+    private DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notes");
 
-    FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
-    DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notes");
+    private DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
 
-    DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
+    private StorageReference storageReference= FirebaseStorage.getInstance().getReference("Images");
+
+    private int noOfImages=0;
 
     public Notes_Adapter(ArrayList<Notes_Model> arrayList, Context context) {
         this.arrayList = arrayList;
@@ -68,7 +74,8 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
         //Log.d("Size", String.valueOf(arrayList.size()));
 
-        String key=arrayList.get(position).getMyKey();
+        String key=arrayList.get(holder.getAdapterPosition()).getMyKey();
+
 
         favorites.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -92,8 +99,8 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                 });
 
 
-        holder.title.setText(arrayList.get(position).title);
-        holder.time.setText(arrayList.get(position).time);
+        holder.title.setText(arrayList.get(holder.getAdapterPosition()).title);
+        holder.time.setText(arrayList.get(holder.getAdapterPosition()).time);
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -138,9 +145,9 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             }
                             else
                             {
-                                String title=arrayList.get(position).title;
-                                String des=arrayList.get(position).description;
-                                String time=arrayList.get(position).time;
+                                String title=arrayList.get(holder.getAdapterPosition()).title;
+                                String des=arrayList.get(holder.getAdapterPosition()).description;
+                                String time=arrayList.get(holder.getAdapterPosition()).time;
 
                                 HashMap map=new HashMap();
                                 map.put("Title",title);
@@ -237,6 +244,22 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                             case R.id.deleteNote:
 
+                                reference.child(firebaseAuth.getCurrentUser().getUid())
+                                        .child(key)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                String nCount=snapshot.child("Count").getValue().toString();
+                                                noOfImages=Integer.parseInt(nCount);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
                                 reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -246,6 +269,29 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                             favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key)
                                                     .removeValue();
+
+                                            Log.d("Location",reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).getKey());
+
+                                            for(int i=0;i<noOfImages;i++)
+                                            {
+                                                storageReference.child(firebaseAuth.getCurrentUser().getUid())
+                                                        .child(key)
+                                                        .child(String.valueOf(i))
+                                                        .delete()
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+                                                                Log.d("Message","Success");
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+
+                                                        Log.e("Message",e.getMessage());
+                                                    }
+                                                });
+                                            }
 
 
                                             DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),

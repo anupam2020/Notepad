@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -26,6 +28,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -62,7 +66,7 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    private RelativeLayout addRelative;
+    private RelativeLayout addRelative,rootLayout;
 
     private TextView topTextAdd;
 
@@ -93,6 +97,7 @@ public class AddNotesActivity extends AppCompatActivity {
         recyclerView=findViewById(R.id.addImageRecycler);
 
         addRelative=findViewById(R.id.addNotesRelative1);
+        rootLayout=findViewById(R.id.addNotesRootLayout);
 
         tick=findViewById(R.id.addNotesTickButton);
         addImgIcon=findViewById(R.id.addImage);
@@ -164,6 +169,9 @@ public class AddNotesActivity extends AppCompatActivity {
             String textTitle=title.getText().toString();
             String textDes=des.getText().toString();
             String strTime=simpleDateFormat.format(date);
+
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(rootLayout.getWindowToken(), 0);
 
 
             myURI=new Uri[uriArrayList.size()];
@@ -296,10 +304,11 @@ public class AddNotesActivity extends AppCompatActivity {
         map.put("Count",myURI.length);
 
         DatabaseReference dRefPushed=notesDatabase.child(notesAuth.getCurrentUser().getUid()).push();
+        String firebaseKEY=dRefPushed.getKey();
 
-        Log.d("GET KEY",dRefPushed.getKey());
+        Log.d("GET KEY",firebaseKEY);
 
-        notesDatabase.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        notesDatabase.child(notesAuth.getCurrentUser().getUid()).child(firebaseKEY).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
@@ -309,20 +318,40 @@ public class AddNotesActivity extends AppCompatActivity {
                     if(myURI.length!=0)
                     {
 
+                        if(myURI.length==1)
+                        {
+                            Snackbar.make(rootLayout,"1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                        }
+                        else
+                        {
+                            Snackbar.make(rootLayout,myURI.length+" items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                        }
+
                         for(int i=0;i<myURI.length;i++)
                         {
+                            int temp = i;
 
-                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(dRefPushed.getKey()).child(String.valueOf(i))
+                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(firebaseKEY).child(String.valueOf(i))
                                     .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 
+                                    if(myURI.length==1)
+                                    {
+                                        Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        if((temp+1)==myURI.length)
+                                        {
+                                            Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                        }
+                                    }
 
-                                    DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+                                    //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
                                     dialog.dismiss();
-                                    DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -334,6 +363,9 @@ public class AddNotesActivity extends AppCompatActivity {
                             });
 
                         }
+
+                        DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
 
                     }
                     else

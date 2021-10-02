@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/addNotesRootLayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -110,7 +111,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/editTextLayout2"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3" />
+                    app:spanCount="3"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="5dp"/>
 
 
                 <ImageView
