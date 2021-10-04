@@ -81,7 +81,7 @@ public class EditNotes extends AppCompatActivity {
 
     private RecyclerView imagesRecycler;
 
-    private StorageReference storageReference;
+    private StorageReference storageReference,sampleRef;
 
     private int noOfImages,storageImagesCount;
 
@@ -123,6 +123,7 @@ public class EditNotes extends AppCompatActivity {
         date=new Date();
 
         storageReference= FirebaseStorage.getInstance().getReference("Images");
+        sampleRef= FirebaseStorage.getInstance().getReference("Sample_Images");
 
         editAuth=FirebaseAuth.getInstance();
         editRef= FirebaseDatabase.getInstance().getReference("Notes");
@@ -151,6 +152,7 @@ public class EditNotes extends AppCompatActivity {
 
                 for(int i=0;i<noOfImages;i++)
                 {
+                    int temp=i;
 
                     Log.d("i print", String.valueOf(i));
 
@@ -166,16 +168,7 @@ public class EditNotes extends AppCompatActivity {
 
                                     retrievedURIArrayList.add(uri);
 
-                                    Log.d("URL",uri.toString());
-
-                                    Log.d("RetrievedArrayListSIZE", String.valueOf(retrievedURIArrayList.size()));
-
-//                                    myURI=new Uri[uriArrayList.size()];
-//
-//                                    for(int i=0;i<uriArrayList.size();i++)
-//                                    {
-//                                        myURI[i]=uriArrayList.get(i);
-//                                    }
+                                    uriArrayList.add(uri);
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -187,6 +180,7 @@ public class EditNotes extends AppCompatActivity {
                     });
 
                 }
+
 
             }
 
@@ -250,9 +244,9 @@ public class EditNotes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String textTitle=title.getText().toString();
-                String textDes=des.getText().toString();
-                String strTime=simpleDateFormat.format(date);
+                String textTitle = title.getText().toString();
+                String textDes = des.getText().toString();
+                String strTime = simpleDateFormat.format(date);
 
                 dialog.show();
                 dialog.setContentView(R.layout.loading_bg);
@@ -260,141 +254,116 @@ public class EditNotes extends AppCompatActivity {
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
 
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(rootLayout.getWindowToken(), 0);
 
 
-                myURI=new Uri[uriArrayList.size()];
+                myURI = new Uri[uriArrayList.size()];
 
                 Log.d("myURI SIZE", String.valueOf(myURI.length));
 
-                for(int i=0;i<uriArrayList.size();i++)
-                {
-                    myURI[i]=uriArrayList.get(i);
+                for (int i = 0; i < uriArrayList.size(); i++) {
+                    myURI[i] = uriArrayList.get(i);
                 }
 
 
-                HashMap map=new HashMap();
-                map.put("Title",textTitle);
-                map.put("Description",textDes);
-                map.put("Time",strTime);
-                map.put("Count",myURI.length+retrievedURIArrayList.size());
+                HashMap map = new HashMap();
+                map.put("Title", textTitle);
+                map.put("Description", textDes);
+                map.put("Time", strTime);
+                map.put("Count", myURI.length);
 
 
-                editRef.child(editAuth.getCurrentUser().getUid()).child(key).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                editRef.child(editAuth.getCurrentUser().getUid())
+                        .child(key)
+                        .updateChildren(map)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
 
-                        Log.d("Task",task.toString());
+                                Log.d("Task", task.toString());
 
-                        if(task.isSuccessful())
-                        {
+                                if (task.isSuccessful()) {
 
-                            favRef.child(editAuth.getCurrentUser().getUid()).child("FavList")
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    favRef.child(editAuth.getCurrentUser().getUid()).child("FavList")
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                            if(snapshot.hasChild(key))
-                                            {
-                                                favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
-                                                        .updateChildren(map);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
-
-
-                            int len=new Edit_Images_Adapter(arrayList,EditNotes.this,uriArrayList,retrievedURIArrayList,key).list.size();
-                            Log.d("LEN", String.valueOf(len));
-
-                            for(int i=0;i<retrievedURIArrayList.size();i++)
-                            {
-
-                                storageReference.child(editAuth.getCurrentUser().getUid()).child(key)
-                                        .child(String.valueOf(i))
-                                        .delete();
-
-                            }
-
-
-                            if(myURI.length!=0)
-                            {
-
-                                if(myURI.length==1)
-                                {
-                                    Snackbar.make(rootLayout,"1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
-                                }
-                                else
-                                {
-                                    Snackbar.make(rootLayout,myURI.length+" items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
-                                }
-
-                                for(int i = retrievedURIArrayList.size(); i<myURI.length+retrievedURIArrayList.size(); i++)
-                                {
-                                    int temp = i;
-
-                                    j=0;
-
-                                    storageReference.child(editAuth.getCurrentUser().getUid())
-                                            .child(key)
-                                            .child(String.valueOf(i))
-                                            .putFile(myURI[j]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-
-                                            if(myURI.length==1)
-                                            {
-                                                Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                            {
-                                                if((temp+1)==myURI.length)
-                                                {
-                                                    Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                    if (snapshot.hasChild(key)) {
+                                                        favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                                                .updateChildren(map);
+                                                    }
                                                 }
-                                            }
 
-                                            //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
-                                            dialog.dismiss();
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
 
-                                            j++;
+                                                }
+                                            });
+
+
+                                    int len = uriArrayList.size();
+
+                                    if (len != 0) {
+
+
+                                        if (len == 1) {
+                                            Snackbar.make(rootLayout, "1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                        } else {
+                                            Snackbar.make(rootLayout, len + " items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                        }
+
+                                        for (int i = 0; i < myURI.length; i++) {
+                                            int temp = i;
+
+                                            storageReference.child(editAuth.getCurrentUser().getUid())
+                                                    .child(key)
+                                                    .child(String.valueOf(i))
+                                                    .putFile(myURI[temp]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                @Override
+                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                                                    if (len == 1) {
+                                                        Snackbar.make(rootLayout, "1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                    } else {
+                                                        if ((temp + 1) == len) {
+                                                            Snackbar.make(rootLayout, (temp + 1) + " items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+                                                    dialog.dismiss();
+
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                    DynamicToast.makeError(EditNotes.this, e.getMessage(), 2000).show();
+                                                }
+                                            });
 
                                         }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
 
-                                            DynamicToast.makeError(EditNotes.this,e.getMessage(),2000).show();
-                                        }
-                                    });
+                                        DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                    } else {
+                                        dialog.dismiss();
+                                        DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                                    }
 
                                 }
-
-                                DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
                             }
-                            else
-                            {
-                                dialog.dismiss();
-                                DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-                            }
-
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
+                        }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
                         dialog.dismiss();
-                        DynamicToast.makeError(EditNotes.this,e.getMessage(),2000).show();
+                        DynamicToast.makeError(EditNotes.this, e.getMessage(), 2000).show();
                     }
                 });
 

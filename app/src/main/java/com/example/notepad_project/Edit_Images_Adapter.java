@@ -2,6 +2,7 @@ package com.example.notepad_project;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -24,15 +27,9 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
     Context context;
     String key;
 
-    ArrayList<Integer> list=new ArrayList<>();
-
     private FirebaseAuth fAuth=FirebaseAuth.getInstance();
     private StorageReference sRef= FirebaseStorage.getInstance().getReference("Images");
 
-    public Edit_Images_Adapter()
-    {
-
-    }
 
     public Edit_Images_Adapter(ArrayList<Images_Model> arrayList, Context context, ArrayList<Uri> uriArrayList,ArrayList<Uri> retrievedURIArrayList,String key) {
         this.arrayList = arrayList;
@@ -51,8 +48,6 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
 
-
-
         holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).url));
 
         Picasso.get()
@@ -65,13 +60,12 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
             public void onClick(View v) {
 
                 arrayList.remove(holder.getAdapterPosition());
-                if(uriArrayList.size()>0)
+                if(uriArrayList.size() > 0)
                 {
                     uriArrayList.remove(holder.getAdapterPosition());
                 }
-                if(retrievedURIArrayList.size()>0)
+                if(retrievedURIArrayList.size() > holder.getAdapterPosition())
                 {
-                    list.add(holder.getAdapterPosition());
                     retrievedURIArrayList.remove(holder.getAdapterPosition());
                 }
 
