@@ -3,16 +3,21 @@ package com.example.notepad_project;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,13 +26,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +49,7 @@ public class EditNotes extends AppCompatActivity {
 
 
     private EditText title,des;
-    private ImageView tick,addImgIcon,editImageNote,editVoiceIcon;
+    private ImageView tick,editImageNote,editVoiceIcon;
 
     private FirebaseAuth editAuth;
     private DatabaseReference editRef,favRef;
@@ -51,13 +61,31 @@ public class EditNotes extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat;
     private Date date;
 
-    private RelativeLayout editRelative;
+    private RelativeLayout editRelative,rootLayout;
 
     private TextView topTextEdit;
 
     private int code=123,speech=111;
 
     private static int state = -1 ;
+
+    private ArrayList<Images_Model> arrayList;
+
+    private Edit_Images_Adapter adapter;
+
+    private static ArrayList<Uri> uriArrayList,retrievedURIArrayList;
+
+    private Uri multipleURI;
+
+    private static Uri myURI[];
+
+    private RecyclerView imagesRecycler;
+
+    private StorageReference storageReference;
+
+    private int noOfImages,storageImagesCount;
+
+    private int j=0;
 
 
     @Override
@@ -66,6 +94,8 @@ public class EditNotes extends AppCompatActivity {
         setContentView(R.layout.activity_edit_notes);
 
         Log.d("State", String.valueOf(new NotesActivity().check));
+
+        key=getIntent().getStringExtra("key");
 
 
         title=findViewById(R.id.editNotesTitle);
@@ -79,15 +109,24 @@ public class EditNotes extends AppCompatActivity {
         dialog=new ProgressDialog(this);
 
         editRelative=findViewById(R.id.editNotesRelative1);
+        rootLayout=findViewById(R.id.editNotesRootRelative);
+
+        arrayList=new ArrayList<>();
+        uriArrayList=new ArrayList<>();
+        retrievedURIArrayList=new ArrayList<>();
+        imagesRecycler=findViewById(R.id.editImageRecycler);
+
+        adapter=new Edit_Images_Adapter(arrayList,EditNotes.this,uriArrayList,retrievedURIArrayList,key);
+        imagesRecycler.setAdapter(adapter);
 
         simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
         date=new Date();
 
+        storageReference= FirebaseStorage.getInstance().getReference("Images");
+
         editAuth=FirebaseAuth.getInstance();
         editRef= FirebaseDatabase.getInstance().getReference("Notes");
         favRef= FirebaseDatabase.getInstance().getReference("Favorites");
-
-        key=getIntent().getStringExtra("key");
 
         dialog.show();
         dialog.setContentView(R.layout.loading_bg);
@@ -105,6 +144,49 @@ public class EditNotes extends AppCompatActivity {
 
                 nDes=snapshot.child("Description").getValue().toString();
                 des.setText(nDes);
+
+                String nCount=snapshot.child("Count").getValue().toString();
+                noOfImages=Integer.parseInt(nCount);
+                storageImagesCount=noOfImages;
+
+                for(int i=0;i<noOfImages;i++)
+                {
+
+                    Log.d("i print", String.valueOf(i));
+
+                    storageReference.child(editAuth.getCurrentUser().getUid()).child(key)
+                            .child(String.valueOf(i))
+                            .getDownloadUrl()
+                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+
+                                    arrayList.add(new Images_Model(uri.toString()));
+                                    imagesRecycler.setAdapter(adapter);
+
+                                    retrievedURIArrayList.add(uri);
+
+                                    Log.d("URL",uri.toString());
+
+                                    Log.d("RetrievedArrayListSIZE", String.valueOf(retrievedURIArrayList.size()));
+
+//                                    myURI=new Uri[uriArrayList.size()];
+//
+//                                    for(int i=0;i<uriArrayList.size();i++)
+//                                    {
+//                                        myURI[i]=uriArrayList.get(i);
+//                                    }
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            Log.e("Exception",e.getMessage());
+                        }
+                    });
+
+                }
 
             }
 
@@ -134,6 +216,14 @@ public class EditNotes extends AppCompatActivity {
                     startActivityForResult(speechIntent,speech);
                 }
 
+            }
+        });
+
+        editImageNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                openGallery();
             }
         });
 
@@ -169,10 +259,26 @@ public class EditNotes extends AppCompatActivity {
                 dialog.setCancelable(false);
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(rootLayout.getWindowToken(), 0);
+
+
+                myURI=new Uri[uriArrayList.size()];
+
+                Log.d("myURI SIZE", String.valueOf(myURI.length));
+
+                for(int i=0;i<uriArrayList.size();i++)
+                {
+                    myURI[i]=uriArrayList.get(i);
+                }
+
+
                 HashMap map=new HashMap();
                 map.put("Title",textTitle);
                 map.put("Description",textDes);
                 map.put("Time",strTime);
+                map.put("Count",myURI.length+retrievedURIArrayList.size());
 
 
                 editRef.child(editAuth.getCurrentUser().getUid()).child(key).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -202,9 +308,84 @@ public class EditNotes extends AppCompatActivity {
                                         }
                                     });
 
-                            dialog.dismiss();
-                            DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                    getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                            int len=new Edit_Images_Adapter(arrayList,EditNotes.this,uriArrayList,retrievedURIArrayList,key).list.size();
+                            Log.d("LEN", String.valueOf(len));
+
+                            for(int i=0;i<retrievedURIArrayList.size();i++)
+                            {
+
+                                storageReference.child(editAuth.getCurrentUser().getUid()).child(key)
+                                        .child(String.valueOf(i))
+                                        .delete();
+
+                            }
+
+
+                            if(myURI.length!=0)
+                            {
+
+                                if(myURI.length==1)
+                                {
+                                    Snackbar.make(rootLayout,"1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                }
+                                else
+                                {
+                                    Snackbar.make(rootLayout,myURI.length+" items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                }
+
+                                for(int i = retrievedURIArrayList.size(); i<myURI.length+retrievedURIArrayList.size(); i++)
+                                {
+                                    int temp = i;
+
+                                    j=0;
+
+                                    storageReference.child(editAuth.getCurrentUser().getUid())
+                                            .child(key)
+                                            .child(String.valueOf(i))
+                                            .putFile(myURI[j]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                                            if(myURI.length==1)
+                                            {
+                                                Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                            {
+                                                if((temp+1)==myURI.length)
+                                                {
+                                                    Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
+                                            dialog.dismiss();
+
+                                            j++;
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                            DynamicToast.makeError(EditNotes.this,e.getMessage(),2000).show();
+                                        }
+                                    });
+
+                                }
+
+                                DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                            }
+                            else
+                            {
+                                dialog.dismiss();
+                                DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                            }
 
                         }
                     }
@@ -231,9 +412,54 @@ public class EditNotes extends AppCompatActivity {
 
     }
 
+    private void openGallery()
+    {
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(Intent.createChooser(intent,"Please select your files"),code);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        if(requestCode == code && resultCode == RESULT_OK && data.getData()!=null)
+        {
+
+            ClipData cd=data.getClipData();
+
+            if(cd==null)
+            {
+                Uri uri=data.getData();
+                uriArrayList.add(uri);
+                arrayList.add(new Images_Model(uri.toString()));
+            }
+            else
+            {
+
+                for(int i=0;i<data.getClipData().getItemCount();i++)
+                {
+
+                    multipleURI=data.getClipData().getItemAt(i).getUri();
+
+                    uriArrayList.add(multipleURI);
+
+                    arrayList.add(new Images_Model(multipleURI.toString()));
+
+                }
+
+            }
+
+            adapter.notifyDataSetChanged();
+
+        }
+
 
         if(requestCode==speech && data!=null)
         {
@@ -244,7 +470,7 @@ public class EditNotes extends AppCompatActivity {
                 String strTitle=title.getText().toString();
                 title.setText(strTitle+" "+result.get(0));
             }
-            else
+            else if(state==0)
             {
                 String strDes=des.getText().toString();
                 des.setText(strDes+" "+result.get(0));

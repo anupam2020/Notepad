@@ -340,12 +340,16 @@ public class AddNotesActivity extends AppCompatActivity {
                                     if(myURI.length==1)
                                     {
                                         Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                        DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                     }
                                     else
                                     {
                                         if((temp+1)==myURI.length)
                                         {
                                             Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                            DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                    getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                         }
                                     }
 
@@ -363,9 +367,6 @@ public class AddNotesActivity extends AppCompatActivity {
                             });
 
                         }
-
-                        DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
 
                     }
                     else
