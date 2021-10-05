@@ -1,5 +1,6 @@
 package com.example.notepad_project;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -66,6 +68,25 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
                 }
                 if(retrievedURIArrayList.size() > holder.getAdapterPosition())
                 {
+
+                    sRef.child(fAuth.getCurrentUser().getUid())
+                            .child(key)
+                            .child(String.valueOf(holder.getAdapterPosition()))
+                            .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+
+                            DynamicToast.make(context, "Image successfully deleted!!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                            DynamicToast.makeError(context,e.getMessage(),2000).show();
+                        }
+                    });
+
                     retrievedURIArrayList.remove(holder.getAdapterPosition());
                 }
 

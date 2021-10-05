@@ -82,6 +82,8 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private static Uri myURI[];
 
+    private String url;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -331,11 +333,37 @@ public class AddNotesActivity extends AppCompatActivity {
                         {
                             int temp = i;
 
-                            storageReference.child(notesAuth.getCurrentUser().getUid()).child(firebaseKEY).child(String.valueOf(i))
+                            long time=System.currentTimeMillis();
+
+                            storageReference.child(notesAuth.getCurrentUser().getUid())
+                                    .child(firebaseKEY)
+                                    .child(String.valueOf(time))
                                     .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                                    DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes")
+                                            .child(notesAuth.getCurrentUser().getUid())
+                                            .child(firebaseKEY)
+                                            .push();
+
+
+                                    storageReference.child(notesAuth.getCurrentUser().getUid())
+                                            .child(firebaseKEY)
+                                            .child(String.valueOf(time))
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+
+                                                    url=uri.toString();
+                                                }
+                                            });
+
+                                    HashMap hashMap=new HashMap();
+                                    hashMap.put("ImageLink",url);
+
+                                    pushRef.setValue(hashMap);
 
                                     if(myURI.length==1)
                                     {

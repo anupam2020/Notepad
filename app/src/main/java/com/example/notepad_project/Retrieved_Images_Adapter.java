@@ -34,11 +34,11 @@ public class Retrieved_Images_Adapter extends RecyclerView.Adapter<Retrieved_Ima
     @Override
     public void onBindViewHolder(@NonNull RetrievedViewHolder holder, int position) {
 
-        //Glide.with(context).load(arrayList.get(holder.getAdapterPosition()).url).into(holder.image);
-
         Picasso.get()
                 .load(arrayList.get(position).url)
                 .placeholder(R.drawable.loading_green)
+                .fit()
+                .centerCrop()
                 .into(holder.image);
 
 

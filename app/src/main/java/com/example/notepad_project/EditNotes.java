@@ -81,11 +81,9 @@ public class EditNotes extends AppCompatActivity {
 
     private RecyclerView imagesRecycler;
 
-    private StorageReference storageReference,sampleRef;
+    private StorageReference storageReference;
 
-    private int noOfImages,storageImagesCount;
-
-    private int j=0;
+    private int noOfImages,count;
 
 
     @Override
@@ -123,7 +121,6 @@ public class EditNotes extends AppCompatActivity {
         date=new Date();
 
         storageReference= FirebaseStorage.getInstance().getReference("Images");
-        sampleRef= FirebaseStorage.getInstance().getReference("Sample_Images");
 
         editAuth=FirebaseAuth.getInstance();
         editRef= FirebaseDatabase.getInstance().getReference("Notes");
@@ -134,7 +131,9 @@ public class EditNotes extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        editRef.child(editAuth.getCurrentUser().getUid()).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        editRef.child(editAuth.getCurrentUser().getUid())
+                .child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -148,13 +147,9 @@ public class EditNotes extends AppCompatActivity {
 
                 String nCount=snapshot.child("Count").getValue().toString();
                 noOfImages=Integer.parseInt(nCount);
-                storageImagesCount=noOfImages;
 
                 for(int i=0;i<noOfImages;i++)
                 {
-                    int temp=i;
-
-                    Log.d("i print", String.valueOf(i));
 
                     storageReference.child(editAuth.getCurrentUser().getUid()).child(key)
                             .child(String.valueOf(i))
@@ -166,9 +161,9 @@ public class EditNotes extends AppCompatActivity {
                                     arrayList.add(new Images_Model(uri.toString()));
                                     imagesRecycler.setAdapter(adapter);
 
-                                    retrievedURIArrayList.add(uri);
+                                    //retrievedURIArrayList.add(Uri.parse(uri.toString()));
 
-                                    uriArrayList.add(uri);
+                                    Log.d("MSG","Retrieved...............");
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -244,6 +239,15 @@ public class EditNotes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+
+                Log.d("URI ArrayList Size", String.valueOf(uriArrayList.size()));
+
+                for(int i=0;i<uriArrayList.size();i++)
+                {
+                    Log.d("URI Array Values", String.valueOf(uriArrayList.get(i)));
+                }
+
+
                 String textTitle = title.getText().toString();
                 String textDes = des.getText().toString();
                 String strTime = simpleDateFormat.format(date);
@@ -257,21 +261,20 @@ public class EditNotes extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(rootLayout.getWindowToken(), 0);
 
-
-                myURI = new Uri[uriArrayList.size()];
-
-                Log.d("myURI SIZE", String.valueOf(myURI.length));
-
-                for (int i = 0; i < uriArrayList.size(); i++) {
-                    myURI[i] = uriArrayList.get(i);
-                }
+//                myURI = new Uri[uriArrayList.size()];
+//
+//                Log.d("myURI SIZE", String.valueOf(myURI.length));
+//
+//                for (int i = 0; i < uriArrayList.size(); i++) {
+//                    myURI[i] = uriArrayList.get(i);
+//                }
 
 
                 HashMap map = new HashMap();
                 map.put("Title", textTitle);
                 map.put("Description", textDes);
                 map.put("Time", strTime);
-                map.put("Count", myURI.length);
+                map.put("Count", uriArrayList.size()+retrievedURIArrayList.size());
 
 
                 editRef.child(editAuth.getCurrentUser().getUid())
@@ -283,7 +286,7 @@ public class EditNotes extends AppCompatActivity {
 
                                 Log.d("Task", task.toString());
 
-                                if (task.isSuccessful()) {
+                                if(task.isSuccessful()) {
 
                                     favRef.child(editAuth.getCurrentUser().getUid()).child("FavList")
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -291,7 +294,9 @@ public class EditNotes extends AppCompatActivity {
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                                                     if (snapshot.hasChild(key)) {
-                                                        favRef.child(editAuth.getCurrentUser().getUid()).child("FavList").child(key)
+                                                        favRef.child(editAuth.getCurrentUser().getUid())
+                                                                .child("FavList")
+                                                                .child(key)
                                                                 .updateChildren(map);
                                                     }
                                                 }
@@ -302,6 +307,9 @@ public class EditNotes extends AppCompatActivity {
                                                 }
                                             });
 
+
+                                if(count==noOfImages)
+                                {
 
                                     int len = uriArrayList.size();
 
@@ -314,13 +322,13 @@ public class EditNotes extends AppCompatActivity {
                                             Snackbar.make(rootLayout, len + " items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
                                         }
 
-                                        for (int i = 0; i < myURI.length; i++) {
+                                        for (int i = retrievedURIArrayList.size(); i < retrievedURIArrayList.size()+uriArrayList.size(); i++) {
                                             int temp = i;
 
                                             storageReference.child(editAuth.getCurrentUser().getUid())
                                                     .child(key)
                                                     .child(String.valueOf(i))
-                                                    .putFile(myURI[temp]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                    .putFile(uriArrayList.get(temp)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                 @Override
                                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
@@ -341,6 +349,7 @@ public class EditNotes extends AppCompatActivity {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
 
+                                                    dialog.dismiss();
                                                     DynamicToast.makeError(EditNotes.this, e.getMessage(), 2000).show();
                                                 }
                                             });
@@ -355,6 +364,9 @@ public class EditNotes extends AppCompatActivity {
                                         DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                     }
+
+                                }
+
 
                                 }
                             }
