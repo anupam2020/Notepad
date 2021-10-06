@@ -14,4 +14,8 @@
     <string name="author_name">Author: <u><i>Anupam Basak</i></u></string>
     <string name="author_email">Email: <u><i>anupam00basak@gmail.com</i></u></string>
     <string name="title_activity_main2">MainActivity2</string>
+
+    <string name="facebook_app_id">597548541441077</string>
+    <string name="fb_login_protocol_scheme">fb597548541441077</string>
+
 </resources>
