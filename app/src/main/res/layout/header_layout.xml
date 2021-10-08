@@ -3,6 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="150dp">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/header_image"
+        android:alpha="0.15"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="Anupam Basak"
             android:id="@+id/headerNameText"
             android:textSize="20dp"
             android:textColor="@color/black"
@@ -31,7 +37,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="anupam00basak@gmail.com"
             android:id="@+id/headerEmailText"
             android:textSize="15dp"
             android:textColor="#99000000"
