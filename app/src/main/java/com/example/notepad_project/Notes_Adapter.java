@@ -1,5 +1,6 @@
 package com.example.notepad_project;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -75,7 +76,6 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
         //Log.d("Size", String.valueOf(arrayList.size()));
 
         String key=arrayList.get(holder.getAdapterPosition()).getMyKey();
-
 
         favorites.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -191,13 +191,12 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 
-                        switch (item.getItemId())
-                        {
+                        switch (item.getItemId()) {
 
                             case R.id.editNote:
 
-                                Intent intent=new Intent(context,EditNotes.class);
-                                intent.putExtra("key",key);
+                                Intent intent = new Intent(context, EditNotes.class);
+                                intent.putExtra("key", key);
                                 context.startActivity(intent);
                                 break;
 
@@ -209,14 +208,12 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                                        {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                                            Log.d("dataSnapshot",dataSnapshot.getKey());
-                                            if(dataSnapshot.getKey().equals("Description"))
-                                            {
-                                                title=dataSnapshot.getValue().toString();
-                                                Log.d("title",title);
+                                            Log.d("dataSnapshot", dataSnapshot.getKey());
+                                            if (dataSnapshot.getKey().equals("Description")) {
+                                                title = dataSnapshot.getValue().toString();
+                                                Log.d("title", title);
                                             }
                                             break;
 
@@ -244,74 +241,98 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                             case R.id.deleteNote:
 
+                                ProgressDialog dialog = new ProgressDialog(context);
+
+                                dialog.show();
+                                dialog.setContentView(R.layout.loading_bg);
+                                dialog.setCancelable(false);
+                                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
                                 reference.child(firebaseAuth.getCurrentUser().getUid())
-                                        .child(key)
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                         .child(key)
+                                         .child("Images")
+                                         .addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                                String nCount=snapshot.child("Count").getValue().toString();
-                                                noOfImages=Integer.parseInt(nCount);
+                                                noOfImages = (int) snapshot.getChildrenCount();
+                                                Log.d("Images Count", String.valueOf(noOfImages));
+
+                                                if(noOfImages==0)
+                                                {
+
+                                                    reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
+                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                            if (task.isSuccessful()) {
+                                                                DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                        context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+
+
+                                                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+                                                                dialog.dismiss();
+                                                            }
+                                                        }
+                                                    });
+
+                                                }
+                                                else
+                                                {
+
+                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                        String imageKEY = dataSnapshot.getKey();
+                                                        Images_Model upload = snapshot.child(imageKEY).getValue(Images_Model.class);
+
+                                                        StorageReference ref = FirebaseStorage.getInstance()
+                                                                .getReferenceFromUrl(upload.getUrl());
+
+                                                        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+
+                                                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
+                                                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                        if (task.isSuccessful()) {
+                                                                            DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+
+
+                                                                            favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    }
+                                                                });
+
+                                                            }
+                                                        });
+
+                                                    }
+
+                                                }
+
+                                                notifyDataSetChanged();
+
                                             }
 
                                             @Override
                                             public void onCancelled(@NonNull DatabaseError error) {
 
+                                                Log.e("Error", error.getMessage());
                                             }
                                         });
-
-                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        if(task.isSuccessful())
-                                        {
-
-                                            favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key)
-                                                    .removeValue();
-
-                                            Log.d("Location",reference.child(firebaseAuth.getCurrentUser().getUid()).child(key).getKey());
-
-                                            for(int i=0;i<noOfImages;i++)
-                                            {
-                                                storageReference.child(firebaseAuth.getCurrentUser().getUid())
-                                                        .child(key)
-                                                        .child(String.valueOf(i))
-                                                        .delete()
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void unused) {
-
-                                                                Log.d("Message","Success");
-                                                            }
-                                                        }).addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-
-                                                        Log.e("Message",e.getMessage());
-                                                    }
-                                                });
-                                            }
-
-
-                                            DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
-
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-
-                                        DynamicToast.makeError(context,e.getMessage(),2000).show();
-                                    }
-                                });
-
-                                notifyDataSetChanged();
 
                                 break;
                         }
 
+                        notifyDataSetChanged();
 
                         return true;
                     }

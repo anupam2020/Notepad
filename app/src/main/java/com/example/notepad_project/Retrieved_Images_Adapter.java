@@ -35,13 +35,17 @@ public class Retrieved_Images_Adapter extends RecyclerView.Adapter<Retrieved_Ima
     public void onBindViewHolder(@NonNull RetrievedViewHolder holder, int position) {
 
         Picasso.get()
-                .load(arrayList.get(position).url)
+                .load(arrayList.get(position).getUrl())
                 .placeholder(R.drawable.loading_green)
                 .fit()
                 .centerCrop()
                 .into(holder.image);
 
-
+//        Glide.with(context)
+//                .load("https://images-na.ssl-images-amazon.com/images/I/71TefV4h78L.png")
+//                .placeholder(R.drawable.loading_green)
+//                .centerCrop()
+//                .into(holder.image);
 
     }
 

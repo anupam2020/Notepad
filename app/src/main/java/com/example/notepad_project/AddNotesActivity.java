@@ -105,9 +105,6 @@ public class AddNotesActivity extends AppCompatActivity {
         addImgIcon=findViewById(R.id.addImage);
         addVoiceIcon=findViewById(R.id.addVoice);
 
-        simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
-        date=new Date();
-
         dialog=new ProgressDialog(AddNotesActivity.this);
 
         arrayList=new ArrayList<>();
@@ -162,6 +159,9 @@ public class AddNotesActivity extends AppCompatActivity {
         tick.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
+            date=new Date();
 
             dialog.show();
             dialog.setContentView(R.layout.loading_bg);
@@ -303,7 +303,6 @@ public class AddNotesActivity extends AppCompatActivity {
         map.put("Title",textTitle);
         map.put("Description",textDes);
         map.put("Time",strTime);
-        map.put("Count",myURI.length);
 
         DatabaseReference dRefPushed=notesDatabase.child(notesAuth.getCurrentUser().getUid()).push();
         String firebaseKEY=dRefPushed.getKey();
@@ -331,47 +330,66 @@ public class AddNotesActivity extends AppCompatActivity {
 
                         for(int i=0;i<myURI.length;i++)
                         {
-                            int temp = i;
 
-                            long time=System.currentTimeMillis();
+                            DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes");
+
+                            String imageKEY=pushRef.push().getKey();
+
+                            int temp = i;
 
                             storageReference.child(notesAuth.getCurrentUser().getUid())
                                     .child(firebaseKEY)
-                                    .child(String.valueOf(time))
+                                    .child(imageKEY)
                                     .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-
-                                    DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes");
-
-                                    Images_Model upload=new Images_Model(taskSnapshot.getUploadSessionUri().toString());
-                                    String imageKEY=pushRef.push().getKey();
-
-                                    pushRef.child(notesAuth.getCurrentUser().getUid())
+                                    storageReference.child(notesAuth.getCurrentUser().getUid())
                                             .child(firebaseKEY)
                                             .child(imageKEY)
-                                            .setValue(upload);
+                                            .getDownloadUrl()
+                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+
+                                                    pushRef.child(notesAuth.getCurrentUser().getUid())
+                                                            .child(firebaseKEY)
+                                                            .child("Images")
+                                                            .child(imageKEY)
+                                                            .child("url")
+                                                            .setValue(uri.toString());
+
+                                                }
+                                            });
 
 
                                     if(myURI.length==1)
                                     {
+                                        dialog.dismiss();
                                         Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
                                         DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                        startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
+                                        finishAffinity();
+
                                     }
                                     else
                                     {
+                                        dialog.dismiss();
                                         if((temp+1)==myURI.length)
                                         {
                                             Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
                                             DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                     getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                            startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
+                                            finishAffinity();
                                         }
                                     }
 
                                     //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
-                                    dialog.dismiss();
+
 
 
                                 }
@@ -379,6 +397,7 @@ public class AddNotesActivity extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
 
+                                    dialog.dismiss();
                                     DynamicToast.makeError(AddNotesActivity.this,e.getMessage(),2000).show();
                                 }
                             });
@@ -391,6 +410,9 @@ public class AddNotesActivity extends AppCompatActivity {
                         dialog.dismiss();
                         DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                        startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
+                        finishAffinity();
                     }
                 }
             }

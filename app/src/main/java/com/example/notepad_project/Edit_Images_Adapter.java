@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
@@ -29,9 +31,12 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
     Context context;
     String key;
 
-    private FirebaseAuth fAuth=FirebaseAuth.getInstance();
-    private StorageReference sRef= FirebaseStorage.getInstance().getReference("Images");
+    DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference("Notes");
+    StorageReference reference=FirebaseStorage.getInstance().getReference("Images");
 
+    private FirebaseAuth fAuth=FirebaseAuth.getInstance();
+
+    //private ProgressDialog dialog;
 
     public Edit_Images_Adapter(ArrayList<Images_Model> arrayList, Context context, ArrayList<Uri> uriArrayList,ArrayList<Uri> retrievedURIArrayList,String key) {
         this.arrayList = arrayList;
@@ -50,10 +55,12 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
 
-        holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).url));
+        //dialog=new ProgressDialog(context);
+
+        holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).getUrl()));
 
         Picasso.get()
-                .load(arrayList.get(position).url)
+                .load(arrayList.get(holder.getAdapterPosition()).getUrl())
                 .placeholder(R.drawable.loading_green)
                 .into(holder.img);
 
@@ -61,34 +68,42 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
             @Override
             public void onClick(View v) {
 
+                ProgressDialog dialog = new ProgressDialog(context);
+
+                dialog.show();
+                dialog.setContentView(R.layout.loading_bg);
+                dialog.setCancelable(false);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+                Log.d("ArrayList size Before", String.valueOf(arrayList.size()));
+
+                Images_Model model=arrayList.get(holder.getAdapterPosition());
+                String selectedKEY=model.getKey();
+
+                Log.d("Selected Key",selectedKEY);
+
+                databaseReference.child(fAuth.getCurrentUser().getUid())
+                        .child(key)
+                        .child("Images")
+                        .child(selectedKEY)
+                        .removeValue();
+
+                reference.child(fAuth.getCurrentUser().getUid())
+                         .child(key)
+                         .child(selectedKEY)
+                         .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
+                        dialog.dismiss();
+
+                        DynamicToast.make(context, "Image successfully deleted!!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+
+                    }
+                });
+
                 arrayList.remove(holder.getAdapterPosition());
-                if(uriArrayList.size() > 0)
-                {
-                    uriArrayList.remove(holder.getAdapterPosition());
-                }
-                if(retrievedURIArrayList.size() > holder.getAdapterPosition())
-                {
-
-                    sRef.child(fAuth.getCurrentUser().getUid())
-                            .child(key)
-                            .child(String.valueOf(holder.getAdapterPosition()))
-                            .delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-
-                            DynamicToast.make(context, "Image successfully deleted!!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                            DynamicToast.makeError(context,e.getMessage(),2000).show();
-                        }
-                    });
-
-                    retrievedURIArrayList.remove(holder.getAdapterPosition());
-                }
 
                 notifyDataSetChanged();
 

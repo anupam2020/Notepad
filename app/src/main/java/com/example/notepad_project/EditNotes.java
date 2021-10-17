@@ -95,7 +95,6 @@ public class EditNotes extends AppCompatActivity {
 
         key=getIntent().getStringExtra("key");
 
-
         title=findViewById(R.id.editNotesTitle);
         des=findViewById(R.id.editNotesDes);
         topTextEdit=findViewById(R.id.editNotesTopText);
@@ -116,9 +115,6 @@ public class EditNotes extends AppCompatActivity {
 
         adapter=new Edit_Images_Adapter(arrayList,EditNotes.this,uriArrayList,retrievedURIArrayList,key);
         imagesRecycler.setAdapter(adapter);
-
-        simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
-        date=new Date();
 
         storageReference= FirebaseStorage.getInstance().getReference("Images");
 
@@ -145,34 +141,40 @@ public class EditNotes extends AppCompatActivity {
                 nDes=snapshot.child("Description").getValue().toString();
                 des.setText(nDes);
 
-                String nCount=snapshot.child("Count").getValue().toString();
-                noOfImages=Integer.parseInt(nCount);
 
-                for(int i=0;i<noOfImages;i++)
+                if(editRef.child(editAuth.getCurrentUser().getUid()).child(key).child("Images")!=null)
                 {
 
-                    storageReference.child(editAuth.getCurrentUser().getUid()).child(key)
-                            .child(String.valueOf(i))
-                            .getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    editRef.child(editAuth.getCurrentUser().getUid())
+                            .child(key)
+                            .child("Images")
+                            .addValueEventListener(new ValueEventListener() {
                                 @Override
-                                public void onSuccess(Uri uri) {
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                    arrayList.add(new Images_Model(uri.toString()));
-                                    imagesRecycler.setAdapter(adapter);
+                                    arrayList.clear();
 
-                                    //retrievedURIArrayList.add(Uri.parse(uri.toString()));
+                                    noOfImages= (int) snapshot.getChildrenCount();
 
-                                    Log.d("MSG","Retrieved...............");
+                                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                    {
+                                        String imageKEY=dataSnapshot.getKey();
+                                        Images_Model upload=snapshot.child(imageKEY).getValue(Images_Model.class);
+                                        upload.setKey(imageKEY);
+                                        arrayList.add(upload);
+
+                                    }
+
+                                    adapter.notifyDataSetChanged();
 
                                 }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
 
-                            Log.e("Exception",e.getMessage());
-                        }
-                    });
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                    Log.e("Error",error.getMessage());
+                                }
+                            });
 
                 }
 
@@ -239,14 +241,19 @@ public class EditNotes extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                myURI=new Uri[uriArrayList.size()];
 
-                Log.d("URI ArrayList Size", String.valueOf(uriArrayList.size()));
+                Log.d("myURI SIZE", String.valueOf(myURI.length));
 
                 for(int i=0;i<uriArrayList.size();i++)
                 {
-                    Log.d("URI Array Values", String.valueOf(uriArrayList.get(i)));
+                    myURI[i]=uriArrayList.get(i);
                 }
 
+                Log.d("Total Images Count", String.valueOf(arrayList.size()+uriArrayList.size()));
+
+                simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
+                date=new Date();
 
                 String textTitle = title.getText().toString();
                 String textDes = des.getText().toString();
@@ -269,12 +276,10 @@ public class EditNotes extends AppCompatActivity {
 //                    myURI[i] = uriArrayList.get(i);
 //                }
 
-
                 HashMap map = new HashMap();
                 map.put("Title", textTitle);
                 map.put("Description", textDes);
                 map.put("Time", strTime);
-                map.put("Count", uriArrayList.size()+retrievedURIArrayList.size());
 
 
                 editRef.child(editAuth.getCurrentUser().getUid())
@@ -308,41 +313,74 @@ public class EditNotes extends AppCompatActivity {
                                             });
 
 
-                                if(count==noOfImages)
-                                {
+                                    if(myURI.length!=0)
+                                    {
 
-                                    int len = uriArrayList.size();
-
-                                    if (len != 0) {
-
-
-                                        if (len == 1) {
-                                            Snackbar.make(rootLayout, "1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
-                                        } else {
-                                            Snackbar.make(rootLayout, len + " items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                        if(myURI.length==1)
+                                        {
+                                            Snackbar.make(rootLayout,"1 item is uploading...", Snackbar.LENGTH_INDEFINITE).show();
+                                        }
+                                        else
+                                        {
+                                            Snackbar.make(rootLayout,myURI.length+" items are uploading...", Snackbar.LENGTH_INDEFINITE).show();
                                         }
 
-                                        for (int i = retrievedURIArrayList.size(); i < retrievedURIArrayList.size()+uriArrayList.size(); i++) {
+                                        for(int i=0;i<myURI.length;i++)
+                                        {
+
+                                            DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes");
+
+                                            String imageKEY=pushRef.push().getKey();
+
                                             int temp = i;
 
                                             storageReference.child(editAuth.getCurrentUser().getUid())
                                                     .child(key)
-                                                    .child(String.valueOf(i))
-                                                    .putFile(uriArrayList.get(temp)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                    .child(imageKEY)
+                                                    .putFile(myURI[i]).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                 @Override
                                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                                                    storageReference.child(editAuth.getCurrentUser().getUid())
+                                                            .child(key)
+                                                            .child(imageKEY)
+                                                            .getDownloadUrl()
+                                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                @Override
+                                                                public void onSuccess(Uri uri) {
 
-                                                    if (len == 1) {
-                                                        Snackbar.make(rootLayout, "1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
-                                                    } else {
-                                                        if ((temp + 1) == len) {
-                                                            Snackbar.make(rootLayout, (temp + 1) + " items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                                    pushRef.child(editAuth.getCurrentUser().getUid())
+                                                                            .child(key)
+                                                                            .child("Images")
+                                                                            .child(imageKEY)
+                                                                            .child("url")
+                                                                            .setValue(uri.toString());
+
+                                                                }
+                                                            });
+
+
+                                                    if(myURI.length==1)
+                                                    {
+                                                        dialog.dismiss();
+                                                        Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                        DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                                                    }
+                                                    else
+                                                    {
+                                                        dialog.dismiss();
+                                                        if((temp+1)==myURI.length)
+                                                        {
+                                                            Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                            DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                    getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                                         }
                                                     }
 
                                                     //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
-                                                    dialog.dismiss();
+
+
 
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
@@ -350,22 +388,19 @@ public class EditNotes extends AppCompatActivity {
                                                 public void onFailure(@NonNull Exception e) {
 
                                                     dialog.dismiss();
-                                                    DynamicToast.makeError(EditNotes.this, e.getMessage(), 2000).show();
+                                                    DynamicToast.makeError(EditNotes.this,e.getMessage(),2000).show();
                                                 }
                                             });
 
                                         }
 
-                                        DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         dialog.dismiss();
                                         DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                     }
-
-                                }
 
 
                                 }

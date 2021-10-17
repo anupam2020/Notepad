@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -47,7 +48,7 @@ public class Title_Description extends AppCompatActivity {
     private TextView title,des;
 
     private FirebaseAuth tdAuth;
-    private DatabaseReference tdRef,favRef;
+    private DatabaseReference tdRef,favRef,imageRef;
 
     private String key;
 
@@ -67,7 +68,7 @@ public class Title_Description extends AppCompatActivity {
 
     private StorageReference storageReference;
 
-    private int noOfImages;
+    private int noOfImages=0;
 
 
     @Override
@@ -90,6 +91,7 @@ public class Title_Description extends AppCompatActivity {
         tdAuth=FirebaseAuth.getInstance();
         tdRef= FirebaseDatabase.getInstance().getReference("Notes");
         favRef= FirebaseDatabase.getInstance().getReference("Favorites");
+        imageRef= FirebaseDatabase.getInstance().getReference();
 
         storageReference=FirebaseStorage.getInstance().getReference("Images");
 
@@ -110,8 +112,6 @@ public class Title_Description extends AppCompatActivity {
         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
 
-
-
         tdRef.child(tdAuth.getCurrentUser().getUid()).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -126,38 +126,9 @@ public class Title_Description extends AppCompatActivity {
                 Log.d("Title",nDes);
                 des.setText(nDes);
 
-                String nCount=snapshot.child("Count").getValue().toString();
-                noOfImages=Integer.parseInt(nCount);
-                Log.d("No of Images", String.valueOf(noOfImages));
-
-
-                for(int i=0;i<noOfImages;i++)
-                {
-
-                    Log.d("i print", String.valueOf(i));
-
-                    storageReference.child(tdAuth.getCurrentUser().getUid()).child(key)
-                            .child(String.valueOf(i))
-                            .getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-
-                                    arrayList.add(new Images_Model(uri.toString()));
-                                    imagesRecycler.setAdapter(adapter);
-
-                                    Log.d("URL",uri.toString());
-
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                            Log.e("Exception",e.getMessage());
-                        }
-                    });
-
-                }
+//                String nCount=snapshot.child("Count").getValue().toString();
+//                noOfImages=Integer.parseInt(nCount);
+//                Log.d("No of Images", String.valueOf(noOfImages));
 
 
             }
@@ -169,6 +140,45 @@ public class Title_Description extends AppCompatActivity {
                 DynamicToast.makeError(Title_Description.this,error.getMessage(),2000).show();
             }
         });
+
+        if(tdRef.child(tdAuth.getCurrentUser().getUid())
+                .child(key)
+                .child("Images")!=null)
+        {
+
+            tdRef.child(tdAuth.getCurrentUser().getUid())
+                .child(key)
+                .child("Images")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        noOfImages= (int) snapshot.getChildrenCount();
+                        Log.d("Images Count", String.valueOf(noOfImages));
+
+                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                        {
+                            String imageKEY=dataSnapshot.getKey();
+                            Images_Model upload=snapshot.child(imageKEY).getValue(Images_Model.class);
+                            Log.d("GET URL",upload.getUrl());
+                            arrayList.add(upload);
+                        }
+
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                        Log.e("Error",error.getMessage());
+                    }
+                });
+
+        }
+
+
+
 
 
         edit.setOnClickListener(new View.OnClickListener() {
@@ -252,54 +262,98 @@ public class Title_Description extends AppCompatActivity {
                         progressDialog.setCancelable(false);
                         progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
+                        tdRef.child(tdAuth.getCurrentUser().getUid())
+                            .child(key)
+                            .child("Images")
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                        tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
-                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                                    noOfImages= (int) snapshot.getChildrenCount();
+                                    Log.d("Images Count", String.valueOf(noOfImages));
 
-                                if(task.isSuccessful())
-                                {
-                                    progressDialog.dismiss();
-                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-
-                                    favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
-
-                                    for(int i=0;i<noOfImages;i++)
+                                    if(noOfImages==0)
                                     {
-                                        storageReference.child(tdAuth.getCurrentUser().getUid())
-                                                .child(key)
-                                                .child(String.valueOf(i))
-                                                .delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
 
-                                                        Log.d("Message","Success");
-                                                    }
-                                                }).addOnFailureListener(new OnFailureListener() {
+                                        tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
+                                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
-                                            public void onFailure(@NonNull Exception e) {
+                                            public void onComplete(@NonNull Task<Void> task) {
 
-                                                Log.e("Message",e.getMessage());
+                                                if(task.isSuccessful())
+                                                {
+                                                    progressDialog.dismiss();
+                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+
+                                                    favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+
+                                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
+                                                    finishAffinity();
+                                                }
                                             }
                                         });
+
+                                    }
+                                    else
+                                    {
+
+                                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                        {
+                                            String imageKEY=dataSnapshot.getKey();
+                                            Images_Model upload=snapshot.child(imageKEY).getValue(Images_Model.class);
+
+                                            StorageReference ref=FirebaseStorage.getInstance()
+                                                    .getReferenceFromUrl(upload.getUrl());
+
+                                            ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+
+
+                                                    tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
+                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                            if(task.isSuccessful())
+                                                            {
+                                                                progressDialog.dismiss();
+                                                                DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+
+                                                                favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+
+                                                                startActivity(new Intent(Title_Description.this,NotesActivity.class));
+                                                                finishAffinity();
+                                                            }
+                                                        }
+                                                    });
+
+                                                }
+                                            });
+
+                                        }
+
                                     }
 
-                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                                    finishAffinity();
-                                }
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
 
-                                progressDialog.dismiss();
-                                DynamicToast.makeError(Title_Description.this,e.getMessage(),2000).show();
-                            }
-                        });
+
+                                    adapter.notifyDataSetChanged();
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                    Log.e("Error",error.getMessage());
+                                }
+                            });
+
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override

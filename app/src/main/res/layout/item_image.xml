@@ -10,7 +10,8 @@
         android:src="@drawable/color_note"
         android:id="@+id/itemImage"
         android:layout_alignParentLeft="true"
-        />
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"/>
 
     <ImageView
         android:layout_width="30dp"
@@ -19,7 +20,9 @@
         android:id="@+id/itemClear"
         app:tint="@color/red"
         android:layout_below="@id/itemImage"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"/>
 
 
 

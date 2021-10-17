@@ -33,7 +33,7 @@ public class Images_Adapter extends RecyclerView.Adapter<Images_Adapter.ImageVie
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
 
-        holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).url));
+        holder.img.setImageURI(Uri.parse(arrayList.get(holder.getAdapterPosition()).getUrl()));
 
         holder.clear.setOnClickListener(new View.OnClickListener() {
             @Override
