@@ -342,28 +342,17 @@ public class AddNotesActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                    DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes")
-                                            .child(notesAuth.getCurrentUser().getUid())
+
+                                    DatabaseReference pushRef=FirebaseDatabase.getInstance().getReference("Notes");
+
+                                    Images_Model upload=new Images_Model(taskSnapshot.getUploadSessionUri().toString());
+                                    String imageKEY=pushRef.push().getKey();
+
+                                    pushRef.child(notesAuth.getCurrentUser().getUid())
                                             .child(firebaseKEY)
-                                            .push();
+                                            .child(imageKEY)
+                                            .setValue(upload);
 
-
-                                    storageReference.child(notesAuth.getCurrentUser().getUid())
-                                            .child(firebaseKEY)
-                                            .child(String.valueOf(time))
-                                            .getDownloadUrl()
-                                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                @Override
-                                                public void onSuccess(Uri uri) {
-
-                                                    url=uri.toString();
-                                                }
-                                            });
-
-                                    HashMap hashMap=new HashMap();
-                                    hashMap.put("ImageLink",url);
-
-                                    pushRef.setValue(hashMap);
 
                                     if(myURI.length==1)
                                     {

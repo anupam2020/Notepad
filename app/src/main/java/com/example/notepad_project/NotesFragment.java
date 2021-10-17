@@ -9,11 +9,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,11 +39,19 @@ public class NotesFragment extends Fragment {
 
     private ProgressDialog dialog;
 
+    private TextInputEditText searchText;
+
+    private ArrayList<Notes_Model> filterList;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView=view.findViewById(R.id.addNotesRecyclerView);
+
+        searchText=view.findViewById(R.id.notesSearch);
+
+        filterList=new ArrayList<>();
 
         arrayList=new ArrayList<>();
         adapter=new Notes_Adapter(arrayList,getActivity());
@@ -73,7 +85,6 @@ public class NotesFragment extends Fragment {
 
                 adapter.notifyDataSetChanged();
 
-
                 dialog.dismiss();
             }
 
@@ -85,6 +96,65 @@ public class NotesFragment extends Fragment {
 
             }
         });
+
+
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                filterList.clear();
+
+                if(s.toString().isEmpty())
+                {
+                    recyclerView.setAdapter(new Notes_Adapter(arrayList,getActivity()));
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                {
+                    filter(s.toString());
+                }
+
+
+            }
+        });
+
+    }
+
+    private void filter(String text)
+    {
+
+        Log.d("Text",text);
+
+        for(Notes_Model model : arrayList)
+        {
+
+            Log.d("Title",model.getTitle());
+
+            if(model.getTitle().toLowerCase().contains(text.toLowerCase()))
+            {
+                filterList.add(model);
+            }
+
+
+//            if(model.getTitle().equals(text))
+//            {
+//                filterList.add(model);
+//            }
+        }
+
+        recyclerView.setAdapter(new Notes_Adapter(filterList,getActivity()));
+        adapter.notifyDataSetChanged();
+
     }
 
     @Override
