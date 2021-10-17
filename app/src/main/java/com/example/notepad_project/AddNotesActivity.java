@@ -357,36 +357,43 @@ public class AddNotesActivity extends AppCompatActivity {
                                                             .child("Images")
                                                             .child(imageKEY)
                                                             .child("url")
-                                                            .setValue(uri.toString());
+                                                            .setValue(uri.toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+
+                                                            if(myURI.length==1)
+                                                            {
+
+                                                                Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                                DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                                                                dialog.dismiss();
+
+                                                                startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
+                                                                finishAffinity();
+
+                                                            }
+                                                            else
+                                                            {
+                                                                if((temp+1)==myURI.length)
+                                                                {
+                                                                    Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                                    DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                                                                    dialog.dismiss();
+
+                                                                    startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
+                                                                    finishAffinity();
+                                                                }
+                                                            }
+
+                                                        }
+                                                    });
+
+
 
                                                 }
                                             });
-
-
-                                    if(myURI.length==1)
-                                    {
-                                        dialog.dismiss();
-                                        Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
-                                        DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-                                        startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
-                                        finishAffinity();
-
-                                    }
-                                    else
-                                    {
-                                        dialog.dismiss();
-                                        if((temp+1)==myURI.length)
-                                        {
-                                            Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
-                                            DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                    getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-                                            startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
-                                            finishAffinity();
-                                        }
-                                    }
 
                                     //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
 
@@ -407,9 +414,9 @@ public class AddNotesActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        dialog.dismiss();
                         DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                        dialog.dismiss();
 
                         startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
                         finishAffinity();
