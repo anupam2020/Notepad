@@ -283,7 +283,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
             case R.id.more:
                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new More()).commit();
-                topText.setText("About Us");
+                topText.setText("More");
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
