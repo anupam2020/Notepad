@@ -65,8 +65,9 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
 
         Picasso.get()
                 .load(arrayList.get(holder.getAdapterPosition()).getUrl())
-                .placeholder(R.drawable.loading_green)
+                .placeholder(R.drawable.image_loading)
                 .fit()
+                .centerInside()
                 .into(holder.img);
 
         holder.clear.setOnClickListener(new View.OnClickListener() {

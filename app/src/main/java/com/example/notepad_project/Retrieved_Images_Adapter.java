@@ -36,9 +36,9 @@ public class Retrieved_Images_Adapter extends RecyclerView.Adapter<Retrieved_Ima
 
         Picasso.get()
                 .load(arrayList.get(position).getUrl())
-                .placeholder(R.drawable.loading_green)
+                .placeholder(R.drawable.image_loading)
                 .fit()
-                .centerCrop()
+                .centerInside()
                 .into(holder.image);
 
 //        Glide.with(context)
