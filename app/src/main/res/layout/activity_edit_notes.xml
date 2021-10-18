@@ -110,10 +110,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/editTextLayout2"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    app:spanCount="3"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:layout_marginTop="15dp"
-                    android:scrollbars="vertical"/>
+                    android:scrollbars="vertical"
+                    android:layout_centerHorizontal="true"/>
 
 
                 <ImageView

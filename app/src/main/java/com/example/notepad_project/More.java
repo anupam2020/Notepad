@@ -1,5 +1,8 @@
 package com.example.notepad_project;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -55,9 +60,72 @@ public class More extends Fragment {
         arrow5=view.findViewById(R.id.arrowShare);
 
 
+        layout1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                startActivity(new Intent(getActivity(),AboutUsActivity.class));
+            }
+        });
+
+
+        layout2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(),TermsConditionsActivity.class));
+            }
+        });
+
+
+        layout3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(),PrivacyPolicyActivity.class));
+            }
+        });
+
+
+        layout4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                launchMarket();
+            }
+        });
+
+
+        layout5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    final String appPackageName = getActivity().getPackageName();
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out the App at: https://play.google.com/store/apps/details?id=" + appPackageName);
+                    sendIntent.setType("text/plain");
+                    startActivity(sendIntent);
+                } catch(Exception e) {
+                    DynamicToast.makeError(getActivity(),e.getMessage(),2000).show();
+                }
+
+            }
+        });
 
     }
+
+    private void launchMarket() {
+        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+        Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(myAppLinkToMarket);
+        } catch (ActivityNotFoundException e) {
+            DynamicToast.makeError(getActivity(),e.getMessage(),2000).show();
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

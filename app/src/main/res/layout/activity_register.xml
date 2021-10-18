@@ -34,7 +34,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create an account to Notepad to get all features"
+        android:text="Create an account in Notepad to get all features"
         android:textSize="14dp"
         android:singleLine="true"
         android:layout_centerHorizontal="true"

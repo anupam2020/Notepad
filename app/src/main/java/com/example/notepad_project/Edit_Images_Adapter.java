@@ -22,7 +22,10 @@ import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapter.ImageViewHolder> {
 
@@ -36,7 +39,8 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
 
     private FirebaseAuth fAuth=FirebaseAuth.getInstance();
 
-    //private ProgressDialog dialog;
+    private SimpleDateFormat simpleDateFormat;
+    private Date date;
 
     public Edit_Images_Adapter(ArrayList<Images_Model> arrayList, Context context, ArrayList<Uri> uriArrayList,ArrayList<Uri> retrievedURIArrayList,String key) {
         this.arrayList = arrayList;
@@ -62,11 +66,17 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
         Picasso.get()
                 .load(arrayList.get(holder.getAdapterPosition()).getUrl())
                 .placeholder(R.drawable.loading_green)
+                .fit()
                 .into(holder.img);
 
         holder.clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                simpleDateFormat=new SimpleDateFormat("dd MMM yyyy hh:mm a");
+                date=new Date();
+
+                String strTime=simpleDateFormat.format(date);
 
                 ProgressDialog dialog = new ProgressDialog(context);
 
@@ -86,7 +96,19 @@ public class Edit_Images_Adapter extends RecyclerView.Adapter<Edit_Images_Adapte
                         .child(key)
                         .child("Images")
                         .child(selectedKEY)
-                        .removeValue();
+                        .removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+
+                                HashMap map=new HashMap();
+                                map.put("Time",strTime);
+
+                                databaseReference.child(fAuth.getCurrentUser().getUid())
+                                        .child(key)
+                                        .updateChildren(map);
+                            }
+                        });
 
                 reference.child(fAuth.getCurrentUser().getUid())
                          .child(key)

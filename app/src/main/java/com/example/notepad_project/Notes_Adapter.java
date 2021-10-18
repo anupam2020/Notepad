@@ -46,7 +46,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
     private ArrayList<Notes_Model> arrayList;
     private Context context;
 
-    private String title="";
+    private String title="",des="";
 
     private boolean isFav;
 
@@ -211,17 +211,22 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
                                             Log.d("dataSnapshot", dataSnapshot.getKey());
-                                            if (dataSnapshot.getKey().equals("Description")) {
+                                            if (dataSnapshot.getKey().equals("Title"))
+                                            {
                                                 title = dataSnapshot.getValue().toString();
                                                 Log.d("title", title);
                                             }
-                                            break;
+                                            if (dataSnapshot.getKey().equals("Description"))
+                                            {
+                                                des = dataSnapshot.getValue().toString();
+                                                Log.d("title", des);
+                                            }
 
                                         }
 
                                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
 
-                                        String shareBody = title;
+                                        String shareBody = "Title: "+title+"\n"+"Description: "+des;
 
                                         shareIntent.setType("text/plain");
 
