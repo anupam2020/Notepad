@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +59,7 @@ public class Images_Adapter extends RecyclerView.Adapter<Images_Adapter.ImageVie
 
         ImageView img;
         ImageView clear;
+
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
 

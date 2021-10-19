@@ -13,6 +13,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
@@ -45,9 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AddNotesActivity extends AppCompatActivity {
-
-
-    private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
 
     private EditText title,des;
     private ImageView tick,addImgIcon,addVoiceIcon;
@@ -81,8 +82,6 @@ public class AddNotesActivity extends AppCompatActivity {
     private static ArrayList<Uri> uriArrayList;
 
     private static Uri myURI[];
-
-    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -364,7 +363,7 @@ public class AddNotesActivity extends AppCompatActivity {
                                                             if(myURI.length==1)
                                                             {
 
-                                                                Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                                //Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
                                                                 DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                         getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                                                 dialog.dismiss();
@@ -372,18 +371,20 @@ public class AddNotesActivity extends AppCompatActivity {
                                                                 startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
                                                                 finishAffinity();
 
+
                                                             }
                                                             else
                                                             {
                                                                 if((temp+1)==myURI.length)
                                                                 {
-                                                                    Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                                    //Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
                                                                     DynamicToast.make(AddNotesActivity.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                             getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
                                                                     dialog.dismiss();
 
                                                                     startActivity(new Intent(AddNotesActivity.this,NotesActivity.class));
                                                                     finishAffinity();
+
                                                                 }
                                                             }
 
@@ -394,10 +395,6 @@ public class AddNotesActivity extends AppCompatActivity {
 
                                                 }
                                             });
-
-                                    //DynamicToast.make(AddNotesActivity.this,"Upload Successful!",2000).show();
-
-
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
