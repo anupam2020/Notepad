@@ -1,10 +1,10 @@
 package com.example.notepad_project;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

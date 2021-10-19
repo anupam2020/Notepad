@@ -90,7 +90,7 @@
 
         <service
             android:name=".PushNotificationService"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
