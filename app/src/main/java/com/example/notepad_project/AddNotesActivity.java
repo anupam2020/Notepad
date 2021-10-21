@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
@@ -83,6 +84,10 @@ public class AddNotesActivity extends AppCompatActivity {
 
     private static Uri myURI[];
 
+    private String SHARED_PREFS="SHARED_PREFS";
+
+    private SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +121,8 @@ public class AddNotesActivity extends AppCompatActivity {
         notesDatabase= FirebaseDatabase.getInstance().getReference("Notes");
 
         storageReference=FirebaseStorage.getInstance().getReference("Images");
+
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
 
         addVoiceIcon.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +218,9 @@ public class AddNotesActivity extends AppCompatActivity {
             }
         });
 
-        if(NotesActivity.check)
+
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
         {
             nightModeAdd();
         }

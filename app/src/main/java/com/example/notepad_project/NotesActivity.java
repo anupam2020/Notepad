@@ -14,9 +14,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,13 +68,24 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
     public static boolean check=false;
 
+    private TextView notesCount;
+
+    private ImageView notesCircle;
+
+    private DatabaseReference notesRef;
+
+    private SharedPreferences sp;
+
+    private String SHARED_PREFS="SHARED_PREFS";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
-        getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
+
+        //getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
 
         topText=findViewById(R.id.notesTopText);
 
@@ -83,6 +96,12 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         frameLayout=findViewById(R.id.frameLayout);
 
         view=nav.getHeaderView(0);
+
+        nav.getMenu().getItem(1).setActionView(R.layout.notes_count);
+
+        View v=nav.getMenu().getItem(1).getActionView();
+        notesCount=v.findViewById(R.id.notesCountText);
+        notesCircle=v.findViewById(R.id.notesCountCircle);
 
         nav.setNavigationItemSelectedListener(NotesActivity.this);
 
@@ -98,12 +117,13 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         firebaseAuth=FirebaseAuth.getInstance();
 
         nameRef= FirebaseDatabase.getInstance().getReference("Users");
+        notesRef= FirebaseDatabase.getInstance().getReference("Notes");
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new NotesFavNotesFragment()).commit();
         nav.getMenu().getItem(1).setChecked(true);
         topText.setText("Notes");
 
-
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         Menu menu1 = nav.getMenu();
         MenuItem menuItem = menu1.findItem(R.id.nav_switch);
@@ -115,6 +135,11 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
             public void onClick(View v) {
 
                 check=switcher.isChecked();
+
+                SharedPreferences.Editor editor=sp.edit();
+                editor.putBoolean("state", (check));
+                editor.apply();
+
                 if(check)
                 {
                     nightMode();
@@ -124,10 +149,20 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                     dayMode();
                 }
 
+
             }
         });
 
-
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
+        {
+            nightMode();
+            switcher.toggle();
+        }
+        else
+        {
+            dayMode();
+        }
 
 
         logOut.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +240,24 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(new Intent(NotesActivity.this,AddNotesActivity.class));
             }
         });
+
+
+        notesRef.child(firebaseAuth.getCurrentUser().getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        Log.d("Children Count", String.valueOf(snapshot.getChildrenCount()));
+
+                        notesCount.setText(String.valueOf(snapshot.getChildrenCount()));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
 
 
     }
@@ -321,6 +374,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
         topText.setTextColor(Color.WHITE);
 
+        notesCircle.setImageResource(R.drawable.ic_baseline_circle_24_black);
+
         //frameLayout.setBackgroundColor(Color.WHITE);
 
 
@@ -340,6 +395,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         addNotes.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         topText.setTextColor(Color.BLACK);
+
+        notesCircle.setImageResource(R.drawable.ic_baseline_circle_24_blue);
 
         //frameLayout.setBackgroundColor(R.color.very_light_blue);
 

@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
@@ -85,6 +86,10 @@ public class EditNotes extends AppCompatActivity {
 
     private int noOfImages,count;
 
+    private String SHARED_PREFS="SHARED_PREFS";
+
+    private SharedPreferences sp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +126,8 @@ public class EditNotes extends AppCompatActivity {
         editAuth=FirebaseAuth.getInstance();
         editRef= FirebaseDatabase.getInstance().getReference("Notes");
         favRef= FirebaseDatabase.getInstance().getReference("Favorites");
+
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         dialog.show();
         dialog.setContentView(R.layout.loading_bg);
@@ -416,6 +423,18 @@ public class EditNotes extends AppCompatActivity {
 
             }
         });
+
+
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
+        {
+            nightModeEdit();
+        }
+        else
+        {
+            dayModeEdit();
+        }
+
 
         if(NotesActivity.check)
         {

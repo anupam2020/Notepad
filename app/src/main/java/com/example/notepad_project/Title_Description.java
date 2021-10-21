@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -70,6 +71,10 @@ public class Title_Description extends AppCompatActivity {
 
     private int noOfImages=0;
 
+    private String SHARED_PREFS="SHARED_PREFS";
+
+    private SharedPreferences sp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +107,8 @@ public class Title_Description extends AppCompatActivity {
         imagesRecycler.setAdapter(adapter);
 
         key=getIntent().getStringExtra("key");
+
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         progressDialog=new ProgressDialog(this);
 
@@ -377,20 +384,19 @@ public class Title_Description extends AppCompatActivity {
         });
 
 
-
-
         //adapter.notifyDataSetChanged();
 
 
-
-        if(new NotesActivity().check)
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
         {
-            nightModeEdit();
+            nightModeTD();
         }
         else
         {
-            dayModeEdit();
+            dayModeTD();
         }
+
 
         rootRelative.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -404,7 +410,7 @@ public class Title_Description extends AppCompatActivity {
 
     }
 
-    private void dayModeEdit()
+    private void dayModeTD()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
@@ -421,7 +427,7 @@ public class Title_Description extends AppCompatActivity {
 
     }
 
-    private void nightModeEdit()
+    private void nightModeTD()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));
