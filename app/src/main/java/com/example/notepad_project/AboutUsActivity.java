@@ -2,6 +2,7 @@ package com.example.notepad_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,10 @@ public class AboutUsActivity extends AppCompatActivity {
 
     private TextView topText;
 
+    private String SHARED_PREFS="SHARED_PREFS";
+
+    private SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +38,8 @@ public class AboutUsActivity extends AppCompatActivity {
         back=findViewById(R.id.aboutUsBack);
 
         topText=findViewById(R.id.aboutUsTopText);
+
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,18 +57,19 @@ public class AboutUsActivity extends AppCompatActivity {
             }
         });
 
-        if(new NotesActivity().check)
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
         {
-            nightModeEdit();
+            nightModeAbout();
         }
         else
         {
-            dayModeEdit();
+            dayModeAbout();
         }
 
     }
 
-    private void dayModeEdit()
+    private void dayModeAbout()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
@@ -74,7 +82,7 @@ public class AboutUsActivity extends AppCompatActivity {
 
     }
 
-    private void nightModeEdit()
+    private void nightModeAbout()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));

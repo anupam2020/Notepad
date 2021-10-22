@@ -435,16 +435,6 @@ public class EditNotes extends AppCompatActivity {
             dayModeEdit();
         }
 
-
-        if(NotesActivity.check)
-        {
-            nightModeEdit();
-        }
-        else
-        {
-            dayModeEdit();
-        }
-
     }
 
     private void openGallery()

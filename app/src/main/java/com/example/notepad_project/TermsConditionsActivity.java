@@ -2,6 +2,7 @@ package com.example.notepad_project;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,6 +22,10 @@ public class TermsConditionsActivity extends AppCompatActivity {
 
     private TextView topText;
 
+    private String SHARED_PREFS="SHARED_PREFS";
+
+    private SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +36,8 @@ public class TermsConditionsActivity extends AppCompatActivity {
         back=findViewById(R.id.termsBack);
 
         topText=findViewById(R.id.termsTopText);
+
+        sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         webView=findViewById(R.id.termsWebView);
         //webView.setWebViewClient(client);
@@ -44,18 +51,19 @@ public class TermsConditionsActivity extends AppCompatActivity {
             }
         });
 
-        if(new NotesActivity().check)
+        boolean switchState=sp.getBoolean("state",false);
+        if(switchState)
         {
-            nightModeEdit();
+            nightModeTerms();
         }
         else
         {
-            dayModeEdit();
+            dayModeTerms();
         }
 
     }
 
-    private void dayModeEdit()
+    private void dayModeTerms()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.notes_blue));
@@ -68,7 +76,7 @@ public class TermsConditionsActivity extends AppCompatActivity {
 
     }
 
-    private void nightModeEdit()
+    private void nightModeTerms()
     {
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));
