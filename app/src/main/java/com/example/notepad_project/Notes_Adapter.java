@@ -87,7 +87,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                         }
                         else
                         {
-                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                            holder.star.setImageResource(R.drawable.ic_baseline_bookmark_border_24_black);
                         }
 
                     }

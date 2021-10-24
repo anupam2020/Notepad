@@ -11,6 +11,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/corner_radius_bg.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_bookmark_added_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_bookmark_border_24.xml" value="0.2703125" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_bookmark_border_24_black.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_bookmark_yellow_border_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_check_circle_outline_24.xml" value="0.2703125" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/drawable/ic_baseline_circle_24.xml" value="0.2703125" />
@@ -74,7 +75,7 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_fav_notes.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_image.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_image_retrieved.xml" value="0.2" />
-        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_notes.xml" value="0.264" />
+        <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/item_notes.xml" value="0.2" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/loading_bg.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/notes_count.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Notepad/app/src/main/res/layout/notes_layout.xml" value="0.264" />

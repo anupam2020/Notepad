@@ -43,13 +43,14 @@
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
+                    app:tint="#BF000000"
                     android:src="@drawable/ic_baseline_more_vert_24"
                     android:id="@+id/favItemMore"/>
 
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:src="@drawable/ic_baseline_bookmark_border_24"
+                    android:src="@drawable/ic_baseline_bookmark_border_24_black"
                     android:id="@+id/favItemStar"
                     android:layout_marginTop="15dp"/>
 

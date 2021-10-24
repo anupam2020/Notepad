@@ -73,7 +73,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                         }
                         else
                         {
-                            holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                            holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_border_24_black);
                         }
 
                     }
