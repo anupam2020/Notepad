@@ -36,7 +36,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
     Context context;
     String uid="";
 
-    String favdes="";
+    String favdes="",favtitle="";
 
     boolean isFav;
 
@@ -44,6 +44,10 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
     DatabaseReference reference= FirebaseDatabase.getInstance().getReference("Notes");
 
     DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
+
+    private int count=0;
+
+    private ArrayList<String> imagesList=new ArrayList<>();
 
     public Fav_Notes_Adapter(ArrayList<Fav_Notes_Model> arrayList, Context context) {
         this.arrayList = arrayList;
@@ -165,6 +169,66 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
             @Override
             public void onClick(View v) {
 
+                count=0;
+
+                reference.child(firebaseAuth.getCurrentUser().getUid())
+                        .child(key)
+                        .child("Images")
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                if(snapshot.exists())
+                                {
+                                    int childCount= (int) snapshot.getChildrenCount();
+
+                                    imagesList.clear();
+
+                                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                    {
+                                        reference.child(firebaseAuth.getCurrentUser().getUid())
+                                                .child(key)
+                                                .child("Images")
+                                                .child(dataSnapshot.getKey())
+                                                .child("url")
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                        count++;
+
+                                                        if(count==childCount)
+                                                        {
+                                                            String url=snapshot.getValue().toString();
+                                                            imagesList.add(url);
+                                                        }
+                                                        else
+                                                        {
+                                                            String url=snapshot.getValue().toString();
+                                                            imagesList.add(url+"\n\n");
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+
+                                    }
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
                 PopupMenu popupMenu=new PopupMenu(context,v);
                 popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -190,22 +254,29 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                                        {
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
-                                            Log.d("dataSnapshot",dataSnapshot.getKey());
-                                            if(dataSnapshot.getKey().equals("Description"))
+                                            Log.d("dataSnapshot", dataSnapshot.getKey());
+                                            if (dataSnapshot.getKey().equals("Title"))
                                             {
-                                                favdes=dataSnapshot.getValue().toString();
-                                                Log.d("title",favdes);
+                                                favtitle = dataSnapshot.getValue().toString();
+                                                Log.d("title", favtitle);
                                             }
-                                            break;
+                                            if (dataSnapshot.getKey().equals("Description"))
+                                            {
+                                                favdes = dataSnapshot.getValue().toString();
+                                                Log.d("title", favdes);
+                                            }
 
                                         }
 
-                                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                        Log.d("Images List",imagesList.toString());
 
-                                        String shareBody = favdes;
+                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+                                        String shareBody = "Title: "+favtitle
+                                                +"\n"+"Description: "+favdes
+                                                +"\n\n"+"Images Link: "+imagesList.toString();
 
                                         shareIntent.setType("text/plain");
 

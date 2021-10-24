@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -314,9 +315,8 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 topText.setText("Notes");
                 break;
 
-            case R.id.emailVerification:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
-                topText.setText("Verification");
+            case R.id.updateApp:
+                openAppInGooglePlay();
                 break;
 
             case R.id.logout:
@@ -330,8 +330,9 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 topText.setText("Feedback");
                 break;
 
-            case R.id.shareApp:
-                shareApp();
+            case R.id.verification:
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
+                topText.setText("Verification");
                 break;
 
             case R.id.more:
@@ -343,19 +344,13 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    private void shareApp()
-    {
+    public void openAppInGooglePlay() {
+        final String appPackageName = getPackageName();
         try {
-            final String appPackageName = NotesActivity.this.getPackageName();
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out the App at: https://play.google.com/store/apps/details?id=" + appPackageName);
-            sendIntent.setType("text/plain");
-            startActivity(sendIntent);
-        } catch(Exception e) {
-            DynamicToast.makeError(NotesActivity.this,e.getMessage(),2000).show();
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException e) { // if there is no Google Play on device
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
-
     }
 
 

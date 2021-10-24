@@ -29,7 +29,7 @@
                 <item
                     android:title="Verification"
                     android:icon="@drawable/ic_outline_mark_email_read_24"
-                    android:id="@+id/emailVerification"/>
+                    android:id="@+id/verification"/>
 
                 <item
                     android:title="Sign Out"
@@ -63,14 +63,14 @@
                     android:id="@+id/feedback"/>
 
                 <item
-                    android:title="Invite Friends"
-                    android:icon="@drawable/ic_outline_share_24"
-                    android:id="@+id/shareApp"/>
-
-                <item
                     android:title="More"
                     android:icon="@drawable/ic_outline_info_24"
                     android:id="@+id/more"/>
+
+                <item
+                    android:title="Update App"
+                    android:icon="@drawable/ic_baseline_update_24"
+                    android:id="@+id/updateApp"/>
 
             </group>
 

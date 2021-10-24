@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewHolder>{
@@ -59,6 +60,10 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
     private int noOfImages=0;
 
+    private int count=0;
+
+    private ArrayList<String> imagesList=new ArrayList<>();
+
     public Notes_Adapter(ArrayList<Notes_Model> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
@@ -76,6 +81,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
         //Log.d("Size", String.valueOf(arrayList.size()));
 
         String key=arrayList.get(holder.getAdapterPosition()).getMyKey();
+
 
         favorites.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -184,6 +190,65 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
             @Override
             public void onClick(View v) {
 
+                count=0;
+
+                reference.child(firebaseAuth.getCurrentUser().getUid())
+                        .child(key)
+                        .child("Images")
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                if(snapshot.exists())
+                                {
+                                    int childCount= (int) snapshot.getChildrenCount();
+
+                                    imagesList.clear();
+
+                                    for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                    {
+                                        reference.child(firebaseAuth.getCurrentUser().getUid())
+                                                .child(key)
+                                                .child("Images")
+                                                .child(dataSnapshot.getKey())
+                                                .child("url")
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                        count++;
+
+                                                        if(count==childCount)
+                                                        {
+                                                            String url=snapshot.getValue().toString();
+                                                            imagesList.add(url);
+                                                        }
+                                                        else
+                                                        {
+                                                            String url=snapshot.getValue().toString();
+                                                            imagesList.add(url+"\n\n");
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+
+                                    }
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
                 PopupMenu popupMenu=new PopupMenu(context,v);
                 popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
 
@@ -224,9 +289,13 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                         }
 
+                                        Log.d("Images List",imagesList.toString());
+
                                         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
 
-                                        String shareBody = "Title: "+title+"\n"+"Description: "+des;
+                                        String shareBody = "Title: "+title
+                                                +"\n"+"Description: "+des
+                                                +"\n\n"+"Images Link: "+imagesList.toString();
 
                                         shareIntent.setType("text/plain");
 
