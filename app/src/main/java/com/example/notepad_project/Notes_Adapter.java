@@ -290,19 +290,54 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                         }
 
-                                        Log.d("Images List",imagesList.toString());
+                                        reference.child(firebaseAuth.getCurrentUser().getUid())
+                                                .child(key)
+                                                .child("Images")
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                                        if(snapshot.exists())
+                                                        {
 
-                                        String shareBody = "Title: "+title
-                                                +"\n"+"Description: "+des
-                                                +"\n\n"+"Images Link: "+imagesList.toString();
+                                                            Log.d("Images List",imagesList.toString());
 
-                                        shareIntent.setType("text/plain");
+                                                            Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
 
-                                        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                                                            String shareBody = "Title: "+title
+                                                                    +"\n"+"Description: "+des
+                                                                    +"\n\n"+"Images Link: "+imagesList.toString();
 
-                                        context.startActivity(Intent.createChooser(shareIntent, "Share via"));
+                                                            shareIntent.setType("text/plain");
+
+                                                            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+
+                                                            context.startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+                                                        }
+                                                        else
+                                                        {
+
+                                                            Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+                                                            String shareBody = "Title: "+title
+                                                                    +"\n"+"Description: "+des;
+
+                                                            shareIntent.setType("text/plain");
+
+                                                            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+
+                                                            context.startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+                                                        }
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
 
                                     }
 
