@@ -199,6 +199,8 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                                Log.d("Snapshot Exist", String.valueOf(snapshot.exists()));
+
                                 if(snapshot.exists())
                                 {
                                     int childCount= (int) snapshot.getChildrenCount();
@@ -218,14 +220,13 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                                         count++;
 
+                                                        String url=String.valueOf(snapshot.getValue());
                                                         if(count==childCount)
                                                         {
-                                                            String url=snapshot.getValue().toString();
                                                             imagesList.add(url);
                                                         }
                                                         else
                                                         {
-                                                            String url=snapshot.getValue().toString();
                                                             imagesList.add(url+"\n\n");
                                                         }
 
@@ -373,10 +374,14 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                                                     @Override
                                                                     public void onComplete(@NonNull Task<Void> task) {
 
-                                                                        if (task.isSuccessful()) {
-                                                                            DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+                                                                        if (task.isSuccessful())
+                                                                        {
 
+                                                                            if(snapshot.getChildrenCount()==0)
+                                                                            {
+                                                                                DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                                        context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+                                                                            }
 
                                                                             favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 

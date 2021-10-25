@@ -1,5 +1,6 @@
 package com.example.notepad_project;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +27,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
 
 import java.util.ArrayList;
@@ -45,7 +49,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
     DatabaseReference favorites= FirebaseDatabase.getInstance().getReference("Favorites");
 
-    private int count=0;
+    private int count=0,noOfImages=0;
 
     private ArrayList<String> imagesList=new ArrayList<>();
 
@@ -134,20 +138,6 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                 DynamicToast.make(context, "Removed from Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_remove_24),
                                         context.getResources().getColor(R.color.red), context.getResources().getColor(R.color.black), 2000).show();
                             }
-//                            else
-//                            {
-//                                HashMap map=new HashMap();
-//                                map.put("Fav",isFav);
-//
-//                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList")
-//                                        .child(key).setValue(map);
-//                                isFav=false;
-//
-//                                holder.favstar.setImageResource(R.drawable.ic_baseline_bookmark_yellow_24);
-//
-//                                DynamicToast.make(context, "Added to Favorites!", context.getResources().getDrawable(R.drawable.ic_baseline_bookmark_added_24),
-//                                        context.getResources().getColor(R.color.yellow), context.getResources().getColor(R.color.black), 2000).show();
-//                            }
                         }
 
 
@@ -197,14 +187,13 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
                                                         count++;
 
+                                                        String url=String.valueOf(snapshot.getValue());
                                                         if(count==childCount)
                                                         {
-                                                            String url=snapshot.getValue().toString();
                                                             imagesList.add(url);
                                                         }
                                                         else
                                                         {
-                                                            String url=snapshot.getValue().toString();
                                                             imagesList.add(url+"\n\n");
                                                         }
 
@@ -265,7 +254,7 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                             if (dataSnapshot.getKey().equals("Description"))
                                             {
                                                 favdes = dataSnapshot.getValue().toString();
-                                                Log.d("title", favdes);
+                                                Log.d("Description", favdes);
                                             }
 
                                         }
@@ -296,31 +285,97 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
                             case R.id.deleteNote:
 
-                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                ProgressDialog dialog = new ProgressDialog(context);
 
-                                        if(task.isSuccessful())
-                                        {
+                                dialog.show();
+                                dialog.setContentView(R.layout.loading_bg);
+                                dialog.setCancelable(false);
+                                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-                                            reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
-                                                    .removeValue();
+                                reference.child(firebaseAuth.getCurrentUser().getUid())
+                                        .child(key)
+                                        .child("Images")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                noOfImages = (int) snapshot.getChildrenCount();
+                                                Log.d("Images Count", String.valueOf(noOfImages));
+
+                                                if(noOfImages==0)
+                                                {
+
+                                                    reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
+                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                            if (task.isSuccessful()) {
+                                                                DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                        context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
 
 
-                                            DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                    context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+                                                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
+                                                                dialog.dismiss();
+                                                            }
+                                                        }
+                                                    });
 
-                                        DynamicToast.makeError(context,e.getMessage(),2000).show();
-                                    }
-                                });
+                                                }
+                                                else
+                                                {
 
-                                notifyDataSetChanged();
+                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                        String imageKEY = dataSnapshot.getKey();
+                                                        Images_Model upload = snapshot.child(imageKEY).getValue(Images_Model.class);
+
+                                                        StorageReference ref = FirebaseStorage.getInstance()
+                                                                .getReferenceFromUrl(upload.getUrl());
+
+                                                        ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+
+
+                                                                reference.child(firebaseAuth.getCurrentUser().getUid()).child(key)
+                                                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                                        if (task.isSuccessful())
+                                                                        {
+
+                                                                            if(snapshot.getChildrenCount()==0)
+                                                                            {
+                                                                                DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                                        context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
+                                                                            }
+
+                                                                            favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+
+                                                                            dialog.dismiss();
+                                                                        }
+                                                                    }
+                                                                });
+
+                                                            }
+                                                        });
+
+                                                    }
+
+                                                }
+
+                                                notifyDataSetChanged();
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                Log.e("Error", error.getMessage());
+                                            }
+                                        });
 
                                 break;
                         }

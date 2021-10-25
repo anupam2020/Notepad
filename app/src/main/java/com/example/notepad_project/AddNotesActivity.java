@@ -174,8 +174,8 @@ public class AddNotesActivity extends AppCompatActivity {
             dialog.setCancelable(false);
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-            String textTitle=title.getText().toString();
-            String textDes=des.getText().toString();
+            String textTitle=title.getText().toString().trim();
+            String textDes=des.getText().toString().trim();
             String strTime=simpleDateFormat.format(date);
 
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -197,7 +197,7 @@ public class AddNotesActivity extends AppCompatActivity {
             }
 
 
-            if(textTitle.isEmpty() && textDes.isEmpty())
+            if(textTitle.isEmpty() || textDes.isEmpty())
             {
                 dialog.dismiss();
                 DynamicToast.makeWarning(AddNotesActivity.this,"Fields cannot be empty!",2000).show();

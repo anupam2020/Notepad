@@ -75,6 +75,8 @@ public class Title_Description extends AppCompatActivity {
 
     private SharedPreferences sp;
 
+    private int count=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -296,9 +298,7 @@ public class Title_Description extends AppCompatActivity {
 
                                                     favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 
-
                                                     startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                                                    finishAffinity();
                                                 }
                                             }
                                         });
@@ -328,15 +328,19 @@ public class Title_Description extends AppCompatActivity {
                                                             if(task.isSuccessful())
                                                             {
                                                                 progressDialog.dismiss();
-                                                                DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                                        getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                                                count++;
+
+                                                                if(snapshot.getChildrenCount()==0)
+                                                                {
+                                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+                                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+                                                                }
 
 
                                                                 favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 
-
                                                                 startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                                                                finishAffinity();
                                                             }
                                                         }
                                                     });
