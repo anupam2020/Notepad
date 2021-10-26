@@ -10,9 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
@@ -36,13 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -85,8 +78,6 @@ public class Title_Description extends AppCompatActivity {
 
     private String nTitle,nDes;
 
-    private ArrayList<Uri> uriList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +108,6 @@ public class Title_Description extends AppCompatActivity {
         imagesRecycler=findViewById(R.id.recyclerViewTD);
 
         imagesList=new ArrayList<>();
-
-        uriList=new ArrayList<>();
 
         adapter=new Retrieved_Images_Adapter(arrayList,Title_Description.this);
         imagesRecycler.setAdapter(adapter);
@@ -235,7 +224,6 @@ public class Title_Description extends AppCompatActivity {
                                                 imagesCount++;
 
                                                 String url=String.valueOf(snapshot.getValue());
-                                                uriList.add(Uri.parse(url));
                                                 if(imagesCount==childCount)
                                                 {
                                                     imagesList.add(url);
@@ -461,8 +449,6 @@ public class Title_Description extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Log.d("UriList",uriList.toString());
-
                 tdRef.child(tdAuth.getCurrentUser().getUid()).child(key).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -485,10 +471,9 @@ public class Title_Description extends AppCompatActivity {
                                                     +"\n"+"Description: "+nDes
                                                     +"\n\n"+"Images Link: "+imagesList.toString();
 
-                                            shareIntent.setType("*/*");
+                                            shareIntent.setType("text/plain");
 
                                             shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriList);
 
                                             startActivity(Intent.createChooser(shareIntent, "Share via"));
 
