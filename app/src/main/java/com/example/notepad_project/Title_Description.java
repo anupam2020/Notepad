@@ -10,8 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +39,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.pranavpandey.android.dynamic.toasts.DynamicToast;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.w3c.dom.Text;
 
@@ -53,7 +57,7 @@ public class Title_Description extends AppCompatActivity {
 
     private String key;
 
-    private ImageView edit,delete,back,speak;
+    private ImageView edit,delete,back,speak,share;
 
     private ProgressDialog progressDialog;
 
@@ -75,7 +79,13 @@ public class Title_Description extends AppCompatActivity {
 
     private SharedPreferences sp;
 
-    private int count=0;
+    private int count=0,imagesCount;
+
+    private ArrayList<String> imagesList;
+
+    private String nTitle,nDes;
+
+    private ArrayList<Uri> uriList;
 
 
     @Override
@@ -91,6 +101,7 @@ public class Title_Description extends AppCompatActivity {
         delete=findViewById(R.id.deleteNoteTD);
         back=findViewById(R.id.backTD);
         speak=findViewById(R.id.speakNoteTD);
+        share=findViewById(R.id.shareNoteTD);
 
         relativeLayout=findViewById(R.id.relativeTD);
         rootRelative=findViewById(R.id.titleDesMainRelative);
@@ -104,6 +115,10 @@ public class Title_Description extends AppCompatActivity {
 
         arrayList=new ArrayList<>();
         imagesRecycler=findViewById(R.id.recyclerViewTD);
+
+        imagesList=new ArrayList<>();
+
+        uriList=new ArrayList<>();
 
         adapter=new Retrieved_Images_Adapter(arrayList,Title_Description.this);
         imagesRecycler.setAdapter(adapter);
@@ -125,13 +140,11 @@ public class Title_Description extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                progressDialog.dismiss();
-
-                String nTitle=snapshot.child("Title").getValue().toString();
+                nTitle=snapshot.child("Title").getValue().toString();
                 Log.d("Title",nTitle);
                 title.setText(nTitle);
 
-                String nDes=snapshot.child("Description").getValue().toString();
+                nDes=snapshot.child("Description").getValue().toString();
                 Log.d("Title",nDes);
                 des.setText(nDes);
 
@@ -175,10 +188,14 @@ public class Title_Description extends AppCompatActivity {
 
                         adapter.notifyDataSetChanged();
 
+                        progressDialog.dismiss();
+
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+
+                        progressDialog.dismiss();
 
                         Log.e("Error",error.getMessage());
                     }
@@ -186,6 +203,67 @@ public class Title_Description extends AppCompatActivity {
 
         }
 
+
+        imagesCount=0;
+
+        tdRef.child(tdAuth.getCurrentUser().getUid())
+                .child(key)
+                .child("Images")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        Log.d("Snapshot Exist", String.valueOf(snapshot.exists()));
+
+                        if(snapshot.exists())
+                        {
+                            int childCount= (int) snapshot.getChildrenCount();
+
+                            imagesList.clear();
+
+                            for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                            {
+                                tdRef.child(tdAuth.getCurrentUser().getUid())
+                                        .child(key)
+                                        .child("Images")
+                                        .child(dataSnapshot.getKey())
+                                        .child("url")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                imagesCount++;
+
+                                                String url=String.valueOf(snapshot.getValue());
+                                                uriList.add(Uri.parse(url));
+                                                if(imagesCount==childCount)
+                                                {
+                                                    imagesList.add(url);
+                                                }
+                                                else
+                                                {
+                                                    imagesList.add(url+"\n\n");
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
 
 
@@ -197,7 +275,7 @@ public class Title_Description extends AppCompatActivity {
                 Intent intent=new Intent(Title_Description.this,EditNotes.class);
                 intent.putExtra("key",key);
                 startActivity(intent);
-                finish();
+                //finish();
             }
         });
 
@@ -378,11 +456,85 @@ public class Title_Description extends AppCompatActivity {
             }
         });
 
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Log.d("UriList",uriList.toString());
+
+                tdRef.child(tdAuth.getCurrentUser().getUid()).child(key).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        tdRef.child(tdAuth.getCurrentUser().getUid())
+                                .child(key)
+                                .child("Images")
+                                .addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        if(snapshot.exists())
+                                        {
+
+                                            Log.d("Images List",imagesList.toString());
+
+                                            Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+                                            String shareBody = "Title: "+nTitle
+                                                    +"\n"+"Description: "+nDes
+                                                    +"\n\n"+"Images Link: "+imagesList.toString();
+
+                                            shareIntent.setType("*/*");
+
+                                            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                                            shareIntent.putExtra(Intent.EXTRA_STREAM, uriList);
+
+                                            startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+                                        }
+                                        else
+                                        {
+
+                                            Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+
+                                            String shareBody = "Title: "+nTitle
+                                                    +"\n"+"Description: "+nDes;
+
+                                            shareIntent.setType("text/plain");
+
+                                            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+
+                                            startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+            }
+        });
+
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                onBackPressed();
+                startActivity(new Intent(Title_Description.this,NotesActivity.class));
+                finishAffinity();
 
             }
         });
@@ -414,6 +566,7 @@ public class Title_Description extends AppCompatActivity {
 
     }
 
+
     private void dayModeTD()
     {
 
@@ -428,6 +581,8 @@ public class Title_Description extends AppCompatActivity {
         delete.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         speak.setImageTintList(ColorStateList.valueOf(Color.BLACK));
+
+        share.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
     }
 
@@ -445,6 +600,8 @@ public class Title_Description extends AppCompatActivity {
         delete.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
         speak.setImageTintList(ColorStateList.valueOf(Color.WHITE));
+
+        share.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
     }
 }

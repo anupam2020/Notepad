@@ -235,54 +235,6 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
                                 context.startActivity(intent);
                                 break;
 
-
-                            case R.id.shareNote:
-
-
-                                favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
-                                            Log.d("dataSnapshot", dataSnapshot.getKey());
-                                            if (dataSnapshot.getKey().equals("Title"))
-                                            {
-                                                favtitle = dataSnapshot.getValue().toString();
-                                                Log.d("title", favtitle);
-                                            }
-                                            if (dataSnapshot.getKey().equals("Description"))
-                                            {
-                                                favdes = dataSnapshot.getValue().toString();
-                                                Log.d("Description", favdes);
-                                            }
-
-                                        }
-
-                                        Log.d("Images List",imagesList.toString());
-
-                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-
-                                        String shareBody = "Title: "+favtitle
-                                                +"\n"+"Description: "+favdes
-                                                +"\n\n"+"Images Link: "+imagesList.toString();
-
-                                        shareIntent.setType("text/plain");
-
-                                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-
-                                        context.startActivity(Intent.createChooser(shareIntent, "Share via"));
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
-
-                                break;
-
                             case R.id.deleteNote:
 
                                 ProgressDialog dialog = new ProgressDialog(context);
@@ -397,10 +349,8 @@ public class Fav_Notes_Adapter extends RecyclerView.Adapter<Fav_Notes_Adapter.No
 
     public class NotesViewHolder extends RecyclerView.ViewHolder {
 
-        TextView favtitle;
-        ImageView favmore;
-        ImageView favstar;
-        TextView favtime;
+        TextView favtitle,favtime;
+        ImageView favmore,favstar;
 
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);

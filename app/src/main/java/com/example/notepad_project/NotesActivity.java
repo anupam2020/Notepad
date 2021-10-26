@@ -290,7 +290,7 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
 
                     firebaseAuth.signOut();
                     startActivity(new Intent(NotesActivity.this,MainActivity.class));
-                    finish();
+                    finishAffinity();
                 }
             });
 

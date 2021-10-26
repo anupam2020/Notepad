@@ -79,7 +79,7 @@ public class NotesFragment extends Fragment {
                 {
                     String myKey=dataSnapshot.getKey();
 
-                    arrayList.add(new Notes_Model(myKey,String.valueOf(dataSnapshot.child("Title").getValue()),"",String.valueOf(dataSnapshot.child("Time").getValue())));
+                    arrayList.add(new Notes_Model(myKey,String.valueOf(dataSnapshot.child("Title").getValue()),String.valueOf(dataSnapshot.child("Description").getValue()),String.valueOf(dataSnapshot.child("Time").getValue())));
 
                 }
 

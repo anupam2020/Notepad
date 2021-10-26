@@ -37,11 +37,21 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:src="@drawable/ic_outline_share_24"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:id="@+id/shareNoteTD"
+            android:layout_toLeftOf="@id/deleteNoteTD"
+            app:tint="@color/black"/>
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_outline_edit_24"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:id="@+id/editNoteTD"
-            android:layout_toLeftOf="@id/deleteNoteTD"
+            android:layout_toLeftOf="@id/shareNoteTD"
             app:tint="@color/black"/>
 
         <ImageView

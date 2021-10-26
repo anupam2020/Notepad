@@ -370,18 +370,24 @@ public class EditNotes extends AppCompatActivity {
                                                     if(myURI.length==1)
                                                     {
                                                         dialog.dismiss();
-                                                        Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                        //Snackbar.make(rootLayout,"1 item is uploaded!", Snackbar.LENGTH_SHORT).show();
                                                         DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                                        startActivity(new Intent(EditNotes.this,NotesActivity.class));
+                                                        //finishAffinity();
                                                     }
                                                     else
                                                     {
                                                         dialog.dismiss();
                                                         if((temp+1)==myURI.length)
                                                         {
-                                                            Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
+                                                            //Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
                                                             DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                     getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                                            startActivity(new Intent(EditNotes.this,NotesActivity.class));
+                                                            //finishAffinity();
                                                         }
                                                     }
 
@@ -407,6 +413,9 @@ public class EditNotes extends AppCompatActivity {
                                         dialog.dismiss();
                                         DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                 getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+
+                                        startActivity(new Intent(EditNotes.this,NotesActivity.class));
+                                        //finishAffinity();
                                     }
 
 
@@ -504,6 +513,13 @@ public class EditNotes extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+
+        startActivity(new Intent(EditNotes.this,NotesActivity.class));
+        finishAffinity();
+
+    }
 
     private void nightModeEdit()
     {
