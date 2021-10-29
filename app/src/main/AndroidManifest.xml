@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.notepad_project">
+    package="com.sbdev.notepad_project">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,66 +14,70 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Notepad">
         <activity
-            android:name=".PrivacyPolicyActivity"
+            android:name="com.sbdev.notepad_project.PrivacyPolicyActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".TermsConditionsActivity"
+            android:name="com.sbdev.notepad_project.TermsConditionsActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".AboutUsActivity"
+            android:name="com.sbdev.notepad_project.AboutUsActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".FacebookActivity"
+            android:name="com.sbdev.notepad_project.FacebookActivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
-            android:name=".AddNotesActivity"
+            android:name="com.sbdev.notepad_project.AddNotesActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".TwitterActivity"
+            android:name="com.sbdev.notepad_project.TwitterActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".Title_Description"
+            android:name="com.sbdev.notepad_project.Title_Description"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".EditNotes"
+            android:name="com.sbdev.notepad_project.EditNotes"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".NotesActivity"
+            android:name="com.sbdev.notepad_project.NotesActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/NotesThemeLight"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".RegisterActivity"
+            android:name="com.sbdev.notepad_project.RegisterActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.sbdev.notepad_project.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.sbdev.notepad_project.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/BlackBox"
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
-            android:name=".SplashScreen"
+            android:name="com.sbdev.notepad_project.SplashScreen"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize">
@@ -84,12 +88,11 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
 
         <service
-            android:name=".PushNotificationService"
+            android:name="com.sbdev.notepad_project.PushNotificationService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

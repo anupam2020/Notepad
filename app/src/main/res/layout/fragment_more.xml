@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".More">
+    tools:context="com.sbdev.notepad_project.More">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Version: 1.0"
+                android:text="Version: 1.2"
                 android:textSize="13dp"
                 android:layout_below="@id/moreNoteText"
                 android:layout_centerHorizontal="true"

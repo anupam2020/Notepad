@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".RegisterActivity"
+    tools:context="com.sbdev.notepad_project.RegisterActivity"
     android:id="@+id/registerRelative"
     android:background="@drawable/white_bg">
 
@@ -161,7 +161,7 @@
                 android:id="@+id/registerGoogleButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/google"
+                android:src="@drawable/google_resized"
                 android:padding="5dp"/>
 
         </RelativeLayout>
@@ -178,7 +178,7 @@
                 android:id="@+id/registerTwitterButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/twitter"
+                android:src="@drawable/twitter_resized"
                 android:padding="5dp"/>
 
         </RelativeLayout>
@@ -195,7 +195,7 @@
                 android:id="@+id/registerFacebookButton"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/facebook"
+                android:src="@drawable/facebook_resized"
                 android:padding="5dp"/>
 
         </RelativeLayout>

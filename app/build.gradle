@@ -8,11 +8,11 @@ android {
     compileSdk 30
 
     defaultConfig {
-        applicationId "com.example.notepad_project"
+        applicationId "com.sbdev.notepad_project"
         minSdk 21
         targetSdk 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
