@@ -262,6 +262,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
 
                                                                             if(snapshot.getChildrenCount()==0)
                                                                             {
+                                                                                // PROGRESS DIALOG DISMISS HERE----
                                                                                 DynamicToast.make(context, "Note successfully deleted!", context.getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                                         context.getResources().getColor(R.color.white), context.getResources().getColor(R.color.black), 2000).show();
                                                                             }

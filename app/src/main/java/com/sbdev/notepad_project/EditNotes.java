@@ -378,9 +378,10 @@ public class EditNotes extends AppCompatActivity {
                                                     }
                                                     else
                                                     {
-                                                        dialog.dismiss();
+
                                                         if((temp+1)==myURI.length)
                                                         {
+                                                            dialog.dismiss();
                                                             //Snackbar.make(rootLayout,(temp+1)+" items are uploaded!", Snackbar.LENGTH_SHORT).show();
                                                             DynamicToast.make(EditNotes.this, "Note successfully saved!!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
                                                                     getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
