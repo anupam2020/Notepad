@@ -58,7 +58,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Version: 1.4"
+        android:text="@string/app_version"
         android:textColor="#80000000"
         android:layout_centerHorizontal="true"
         android:textSize="15dp"

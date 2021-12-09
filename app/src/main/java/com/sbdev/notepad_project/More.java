@@ -22,7 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class More extends Fragment {
 
-    RelativeLayout layout1,layout2,layout3,layout4,layout5;
+    RelativeLayout layout1,layout2,layout3,layout4,layout5,layout6;
 
     TextView about,terms,policy,rate,share;
 
@@ -40,6 +40,7 @@ public class More extends Fragment {
         layout3=view.findViewById(R.id.moreRelative3);
         layout4=view.findViewById(R.id.moreRelative4);
         layout5=view.findViewById(R.id.moreRelative5);
+        layout6=view.findViewById(R.id.moreRelative6);
 
         about=view.findViewById(R.id.moreAboutUs);
         terms=view.findViewById(R.id.moreTermsAndCond);
@@ -109,6 +110,26 @@ public class More extends Fragment {
                     startActivity(sendIntent);
                 } catch(Exception e) {
                     DynamicToast.makeError(getActivity(),e.getMessage(),2000).show();
+                }
+
+            }
+        });
+
+
+        layout6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String urlString = "https://linktr.ee/anupambasak";
+                Intent intent = new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setPackage("com.android.chrome");
+                try {
+                    getActivity().startActivity(intent);
+                } catch (ActivityNotFoundException ex) {
+                    // Chrome browser presumably not installed so allow user to choose instead
+                    intent.setPackage(null);
+                    getActivity().startActivity(intent);
                 }
 
             }

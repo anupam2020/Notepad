@@ -489,6 +489,7 @@ public class Title_Description extends AppCompatActivity {
 
                                             startActivity(Intent.createChooser(shareIntent, "Share via"));
 
+
                                         }
 
                                     }
@@ -585,5 +586,12 @@ public class Title_Description extends AppCompatActivity {
 
         share.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        startActivity(new Intent(Title_Description.this,NotesActivity.class));
+        finishAffinity();
     }
 }
