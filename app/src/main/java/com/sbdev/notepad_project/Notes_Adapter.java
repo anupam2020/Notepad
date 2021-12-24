@@ -232,6 +232,8 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                                                 favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 
                                                                 dialog.dismiss();
+
+                                                                context.startActivity(new Intent(context,NotesActivity.class));
                                                             }
                                                         }
                                                     });
@@ -270,6 +272,7 @@ public class Notes_Adapter extends RecyclerView.Adapter<Notes_Adapter.NotesViewH
                                                                             favorites.child(firebaseAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
 
                                                                             dialog.dismiss();
+                                                                            context.startActivity(new Intent(context,NotesActivity.class));
                                                                         }
                                                                     }
                                                                 });

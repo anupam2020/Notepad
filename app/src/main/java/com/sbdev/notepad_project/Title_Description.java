@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +46,7 @@ public class Title_Description extends AppCompatActivity {
 
     private String key;
 
-    private ImageView edit,delete,back,speak,share;
+    private ImageView edit,back,speak,share;
 
     private ProgressDialog progressDialog;
 
@@ -84,7 +85,6 @@ public class Title_Description extends AppCompatActivity {
         des=findViewById(R.id.notesDescriptionTD);
 
         edit=findViewById(R.id.editNoteTD);
-        delete=findViewById(R.id.deleteNoteTD);
         back=findViewById(R.id.backTD);
         speak=findViewById(R.id.speakNoteTD);
         share=findViewById(R.id.shareNoteTD);
@@ -315,131 +315,145 @@ public class Title_Description extends AppCompatActivity {
 
 
 
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog.Builder builder=new AlertDialog.Builder(Title_Description.this);
-
-                builder.setTitle("Delete");
-                builder.setMessage("Do you really want to delete this note?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        progressDialog.show();
-                        progressDialog.setContentView(R.layout.loading_bg);
-                        progressDialog.setCancelable(false);
-                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-                        tdRef.child(tdAuth.getCurrentUser().getUid())
-                            .child(key)
-                            .child("Images")
-                            .addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                                    noOfImages= (int) snapshot.getChildrenCount();
-                                    Log.d("Images Count", String.valueOf(noOfImages));
-
-                                    if(noOfImages==0)
-                                    {
-
-                                        tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
-                                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-
-                                                if(task.isSuccessful())
-                                                {
-                                                    progressDialog.dismiss();
-                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-
-                                                    favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
-
-                                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                                                }
-                                            }
-                                        });
-
-                                    }
-                                    else
-                                    {
-
-                                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
-                                        {
-                                            String imageKEY=dataSnapshot.getKey();
-                                            Images_Model upload=snapshot.child(imageKEY).getValue(Images_Model.class);
-
-                                            StorageReference ref=FirebaseStorage.getInstance()
-                                                    .getReferenceFromUrl(upload.getUrl());
-
-                                            ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-
-
-                                                    tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
-                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-
-                                                            if(task.isSuccessful())
-                                                            {
-                                                                count++;
-
-                                                                if(snapshot.getChildrenCount()==0)
-                                                                {
-
-                                                                    progressDialog.dismiss();
-                                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
-                                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
-
-                                                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                                                                }
-
-
-                                                                favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
-
-
-                                                            }
-                                                        }
-                                                    });
-
-                                                }
-                                            });
-
-                                        }
-
-                                    }
-
-
-
-                                    adapter.notifyDataSetChanged();
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                    Log.e("Error",error.getMessage());
-                                }
-                            });
-
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.show();
-            }
-        });
+//        delete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                AlertDialog.Builder builder=new AlertDialog.Builder(Title_Description.this);
+//
+//                builder.setTitle("Delete");
+//                builder.setMessage("Do you really want to delete this note?");
+//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        progressDialog.show();
+//                        progressDialog.setContentView(R.layout.loading_bg);
+//                        progressDialog.setCancelable(false);
+//                        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+//
+//                        tdRef.child(tdAuth.getCurrentUser().getUid())
+//                            .child(key)
+//                            .child("Images")
+//                            .addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                                    noOfImages= (int) snapshot.getChildrenCount();
+//                                    Log.d("Images Count", String.valueOf(noOfImages));
+//
+//                                    if(noOfImages==0)
+//                                    {
+//
+//                                        tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
+//                                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                            @Override
+//                                            public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                if(task.isSuccessful())
+//                                                {
+//                                                    progressDialog.dismiss();
+//                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+//                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+//
+//
+//                                                    favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+//
+//                                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
+//
+//                                                    new Handler().postDelayed(new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            finishAffinity();
+//                                                        }
+//                                                    },1000);
+//                                                }
+//                                            }
+//                                        });
+//
+//                                    }
+//                                    else
+//                                    {
+//
+//                                        for(DataSnapshot dataSnapshot : snapshot.getChildren())
+//                                        {
+//                                            String imageKEY=dataSnapshot.getKey();
+//                                            Images_Model upload=snapshot.child(imageKEY).getValue(Images_Model.class);
+//
+//                                            StorageReference ref=FirebaseStorage.getInstance()
+//                                                    .getReferenceFromUrl(upload.getUrl());
+//
+//                                            ref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                @Override
+//                                                public void onSuccess(Void unused) {
+//
+//
+//                                                    tdRef.child(tdAuth.getCurrentUser().getUid()).child(key)
+//                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                        @Override
+//                                                        public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                            if(task.isSuccessful())
+//                                                            {
+//                                                                count++;
+//
+//                                                                if(snapshot.getChildrenCount()==0)
+//                                                                {
+//
+//                                                                    progressDialog.dismiss();
+//                                                                    DynamicToast.make(Title_Description.this, "Note successfully deleted!", getDrawable(R.drawable.ic_baseline_check_circle_outline_24),
+//                                                                            getResources().getColor(R.color.white), getResources().getColor(R.color.black), 2000).show();
+//
+//                                                                    startActivity(new Intent(Title_Description.this,NotesActivity.class));
+//
+//                                                                    new Handler().postDelayed(new Runnable() {
+//                                                                        @Override
+//                                                                        public void run() {
+//                                                                            finishAffinity();
+//                                                                        }
+//                                                                    },1000);
+//                                                                }
+//
+//
+//                                                                favRef.child(tdAuth.getCurrentUser().getUid()).child("FavList").child(key).removeValue();
+//
+//
+//                                                            }
+//                                                        }
+//                                                    });
+//
+//                                                }
+//                                            });
+//
+//                                        }
+//
+//                                    }
+//
+//
+//
+//                                    adapter.notifyDataSetChanged();
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                    Log.e("Error",error.getMessage());
+//                                }
+//                            });
+//
+//                    }
+//                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        dialog.dismiss();
+//                    }
+//                });
+//
+//                builder.show();
+//            }
+//        });
 
 
         share.setOnClickListener(new View.OnClickListener() {
@@ -473,7 +487,6 @@ public class Title_Description extends AppCompatActivity {
                                             shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 
                                             startActivity(Intent.createChooser(shareIntent, "Share via"));
-
                                         }
                                         else
                                         {
@@ -488,7 +501,6 @@ public class Title_Description extends AppCompatActivity {
                                             shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 
                                             startActivity(Intent.createChooser(shareIntent, "Share via"));
-
 
                                         }
 
@@ -516,8 +528,11 @@ public class Title_Description extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(Title_Description.this,NotesActivity.class));
-                finishAffinity();
+//                startActivity(new Intent(Title_Description.this,NotesActivity.class));
+//                finish();
+//                //finishAffinity();
+
+                onBackPressed();
 
             }
         });
@@ -561,8 +576,6 @@ public class Title_Description extends AppCompatActivity {
 
         edit.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
-        delete.setImageTintList(ColorStateList.valueOf(Color.BLACK));
-
         speak.setImageTintList(ColorStateList.valueOf(Color.BLACK));
 
         share.setImageTintList(ColorStateList.valueOf(Color.BLACK));
@@ -580,18 +593,18 @@ public class Title_Description extends AppCompatActivity {
 
         edit.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
-        delete.setImageTintList(ColorStateList.valueOf(Color.WHITE));
-
         speak.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
         share.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
     }
 
-    @Override
-    public void onBackPressed() {
-
-        startActivity(new Intent(Title_Description.this,NotesActivity.class));
-        finishAffinity();
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//        startActivity(new Intent(Title_Description.this,NotesActivity.class));
+//        finish();
+//        //finishAffinity();
+//
+//    }
 }

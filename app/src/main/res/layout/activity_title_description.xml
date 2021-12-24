@@ -23,25 +23,14 @@
             android:id="@+id/backTD"
             app:tint="@color/black"/>
 
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_baseline_delete_outline_24"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:id="@+id/deleteNoteTD"
-            app:tint="@color/black"/>
-
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_outline_share_24"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
             android:id="@+id/shareNoteTD"
-            android:layout_toLeftOf="@id/deleteNoteTD"
             app:tint="@color/black"/>
 
         <ImageView
