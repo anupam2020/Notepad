@@ -321,9 +321,14 @@ public class NotesActivity extends AppCompatActivity implements NavigationView.O
                 topText.setText("Feedback");
                 break;
 
-            case R.id.verification:
-                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
-                topText.setText("Verification");
+//            case R.id.verification:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Verification()).commit();
+//                topText.setText("Verification");
+//                break;
+
+            case R.id.notifications:
+                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Notifications()).commit();
+                topText.setText("Notifications");
                 break;
 
             case R.id.more:

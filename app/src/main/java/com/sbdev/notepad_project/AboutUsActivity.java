@@ -12,8 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
-
 public class AboutUsActivity extends AppCompatActivity {
 
     private RelativeLayout relativeLayout;

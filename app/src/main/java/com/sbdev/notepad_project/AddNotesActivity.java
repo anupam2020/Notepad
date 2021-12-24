@@ -88,7 +88,6 @@ public class AddNotesActivity extends AppCompatActivity {
 
         Log.d("State", String.valueOf(new NotesActivity().check));
 
-
         title=findViewById(R.id.addNotesTitle);
         des=findViewById(R.id.addNotesDes);
         topTextAdd=findViewById(R.id.addTopText);
@@ -118,6 +117,15 @@ public class AddNotesActivity extends AppCompatActivity {
         storageReference=FirebaseStorage.getInstance().getReference("Images");
 
         sp=getApplicationContext().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+        if ("android.intent.action.SEND".equals(action) && type != null && "text/plain".equals(type)) {
+            Log.d("INTENT PRINT",intent.getStringExtra("android.intent.extra.TEXT"));
+            des.setText(intent.getStringExtra("android.intent.extra.TEXT"));
+        }
 
 
         addVoiceIcon.setOnClickListener(new View.OnClickListener() {
