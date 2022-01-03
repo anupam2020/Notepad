@@ -101,8 +101,6 @@ public class AddNotesActivity extends AppCompatActivity {
         addImgIcon=findViewById(R.id.addImage);
         addVoiceIcon=findViewById(R.id.addVoice);
 
-
-
         dialog=new ProgressDialog(AddNotesActivity.this);
 
         arrayList=new ArrayList<>();

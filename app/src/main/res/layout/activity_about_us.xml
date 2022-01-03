@@ -14,14 +14,14 @@
         android:background="@drawable/blue_bg_corner_radius">
 
         <ImageView
+            android:id="@+id/aboutUsBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_baseline_arrow_back_24"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
-            android:id="@+id/aboutUsBack"
-            app:tint="@color/black"/>
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
