@@ -1,9 +1,6 @@
 # Notepad
 Organize your thoughts and ideas with this fast, free and lightweight notes app.
 
-## Notepad
-* Store data online with this beautifully designed notepad app!
-
 ### Libraries :
 * Lottie Animations
 * Firebase
